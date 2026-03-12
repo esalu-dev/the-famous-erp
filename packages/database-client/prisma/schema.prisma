@@ -1,0 +1,204 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── USUARIOS ────────────────────────────────────────────────
+model Usuario {
+  id           String   @id @default(uuid())
+  nombre       String
+  correo       String   @unique
+  passwordHash String
+  rol          Rol      @default(Operador)
+  activo       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  preciosModificados PrecioHistorial[]
+  ventasRegistradas  VentaDiaria[]
+  mermasRegistradas  Merma[]
+}
+
+enum Rol {
+  Admin
+  Operador
+}
+
+// ─── INVENTARIO ──────────────────────────────────────────────
+model Insumo {
+  id             String       @id @default(uuid())
+  nombre         String
+  tipo           InsumoTipo
+  unidadMedida   UnidadMedida
+  cantidadActual Decimal      @db.Decimal(10, 2)
+  cantidadMinima Decimal      @db.Decimal(10, 2)
+  precioActual   Decimal      @db.Decimal(10, 2)
+  categoria      CategoriaABC @default(C)
+  imagenUrl      String?
+  activo         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  historialPrecios PrecioHistorial[]
+  proveedores      InsumoProveedor[]
+  recetas          Receta[]
+  mermas           Merma[]
+}
+
+enum InsumoTipo {
+  Comida
+  Bebida
+  Cerveza
+}
+
+enum UnidadMedida {
+  Gramos
+  Piezas
+  Litros
+  Costos
+}
+
+enum CategoriaABC {
+  A
+  B
+  C
+}
+
+model PrecioHistorial {
+  id             String   @id @default(uuid())
+  insumoId       String
+  precioAnterior Decimal  @db.Decimal(10, 2)
+  precioNuevo    Decimal  @db.Decimal(10, 2)
+  fecha          DateTime @default(now())
+  usuarioId      String
+
+  insumo  Insumo  @relation(fields: [insumoId], references: [id])
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+}
+
+// ─── PROVEEDORES ─────────────────────────────────────────────
+model Proveedor {
+  id             String          @id @default(uuid())
+  nombre         String
+  razonSocial    String?
+  rfc            String?
+  tipo           String?
+  contactoNombre String?
+  telefono       String?
+  correo         String?
+  direccion      String?
+  estado         EstadoProveedor @default(Activo)
+  createdAt      DateTime        @default(now())
+
+  insumos InsumoProveedor[]
+}
+
+enum EstadoProveedor {
+  Activo
+  Inactivo
+}
+
+model InsumoProveedor {
+  id             String    @id @default(uuid())
+  insumoId       String
+  proveedorId    String
+  precioUnitario Decimal   @db.Decimal(10, 2)
+  esPreferido    Boolean   @default(false)
+  ultimaCompra   DateTime?
+
+  insumo    Insumo    @relation(fields: [insumoId], references: [id])
+  proveedor Proveedor @relation(fields: [proveedorId], references: [id])
+
+  @@unique([insumoId, proveedorId])
+}
+
+// ─── PRODUCTOS Y RECETAS ─────────────────────────────────────
+model Producto {
+  id          String   @id @default(uuid())
+  nombre      String
+  categoria   String
+  precioVenta Decimal  @db.Decimal(10, 2)
+  imagenUrl   String?
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  receta Receta[]
+  ventas VentaDiaria[]
+}
+
+model Receta {
+  id         String  @id @default(uuid())
+  productoId String
+  insumoId   String
+  cantidad   Decimal @db.Decimal(10, 4)
+
+  producto Producto @relation(fields: [productoId], references: [id])
+  insumo   Insumo   @relation(fields: [insumoId], references: [id])
+
+  @@unique([productoId, insumoId])
+}
+
+// ─── VENTAS Y MERMAS ─────────────────────────────────────────
+model VentaDiaria {
+  id            String   @id @default(uuid())
+  fecha         DateTime @db.Date
+  productoId    String
+  cantidad      Int
+  registradoPor String
+  procesado     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  producto Producto @relation(fields: [productoId], references: [id])
+  usuario  Usuario  @relation(fields: [registradoPor], references: [id])
+}
+
+model Merma {
+  id            String   @id @default(uuid())
+  insumoId      String
+  cantidad      Decimal  @db.Decimal(10, 2)
+  motivo        String?
+  fecha         DateTime @db.Date
+  registradoPor String
+  createdAt     DateTime @default(now())
+
+  insumo  Insumo  @relation(fields: [insumoId], references: [id])
+  usuario Usuario @relation(fields: [registradoPor], references: [id])
+}
+
+// ─── SERVICIOS ───────────────────────────────────────────────
+model Servicio {
+  id           String       @id @default(uuid())
+  nombre       String
+  costo        Decimal      @db.Decimal(10, 2)
+  periodicidad Periodicidad
+  proximoPago  DateTime     @db.Date
+  notas        String?
+  activo       Boolean      @default(true)
+}
+
+enum Periodicidad {
+  Diario
+  Cada3Dias
+  Semanal
+  Mensual
+  Bimestral
+}
+
+// ─── CONFIGURACIÓN GLOBAL ────────────────────────────────────
+model Configuracion {
+  id                      String   @id @default(uuid())
+  porcentajeMantenimiento Decimal  @db.Decimal(5, 2) @default(0)
+  umbralAbcA              Decimal  @db.Decimal(5, 2) @default(80)
+  umbralAbcB              Decimal  @db.Decimal(5, 2) @default(95)
+  updatedAt               DateTime @updatedAt
+  updatedBy               String?
+}
