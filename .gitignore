@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.next/
+build/
+
+# Environment — NUNCA subir al repo
+.env
+.env.local
+
+# Turbo
+.turbo/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+EOF
