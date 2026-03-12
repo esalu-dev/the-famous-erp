@@ -4,13 +4,17 @@
     "apps/*",
     "packages/*"
   ],
+  "packageManager": "npm@10.2.4",
   "scripts": {
     "dev":         "turbo run dev",
     "build":       "turbo run build",
     "test":        "turbo run test",
     "lint":        "turbo run lint",
     "db:generate": "turbo run db:generate",
-    "db:migrate":  "turbo run db:migrate"
+    "db:migrate":  "turbo run db:migrate",
+    "db:up" :      "docker compose up postgres -d",
+    "db:down":     "docker compose stop postgres",
+    "start:dev":   "npm run db:up && turbo run dev"
   },
   "devDependencies": {
     "turbo":      "^2.0.0",
