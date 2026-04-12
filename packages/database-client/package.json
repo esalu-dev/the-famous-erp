@@ -1,8 +1,11 @@
 {
-  "name": "database-client",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@the-famous-erp/database-client",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "tsup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,7 +16,9 @@
     "@types/node": "^25.4.0",
     "@types/pg": "^8.18.0",
     "dotenv": "^17.3.1",
-    "prisma": "^7.5.0"
+    "prisma": "^7.5.0",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.5.1"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.5.0",

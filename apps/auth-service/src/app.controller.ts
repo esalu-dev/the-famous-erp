@@ -13,4 +13,9 @@ export class AppController {
       timestamp: new Date().toISOString(),
     };
   }
+
+  @Get('health-db')
+  healthDb() {
+    return this.appService.dbHealth();
+  }
 }

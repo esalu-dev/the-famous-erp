@@ -1,4 +1,4 @@
-import { Card, Chip } from '@heroui/react';
+import { Card, Chip, Input } from '@heroui/react';
 import { config } from '@/lib/config';
 
 export default async function Home() {
@@ -37,6 +37,9 @@ export default async function Home() {
               <Chip color="warning">Not implemented</Chip>
             </Card.Content>
           </Card>
+          <div>
+            <Input aria-label="Name" className="w-64" placeholder="Correo electronico" />;
+          </div>
         </li>
       </ul>
     </div>
