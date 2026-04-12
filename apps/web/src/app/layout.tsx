@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Manrope } from 'next/font/google';
+import { ThemeProvider } from 'next-themes';
 
 const manrope = Manrope({
   variable: '--font-manrope',
@@ -19,8 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body className={`${manrope.className} antialiased bg-background`}>{children}</body>
+    <html lang="es" suppressHydrationWarning> 
+      <body className={`${manrope.className} antialiased bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300`}>
+        <ThemeProvider attribute="class" defaultTheme="light">
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
