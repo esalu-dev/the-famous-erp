@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient, PrismaPg } from '@the-famous-erp/database-client';
 
@@ -16,10 +17,10 @@ export class PrismaService
   }
 
   async onModuleInit() {
-    await this.$connect();
+    await (this as any).$connect();
   }
 
   async onModuleDestroy() {
-    await this.$disconnect();
+    await (this as any).$disconnect();
   }
 }
