@@ -1,0 +1,65 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from './prisma/prisma.service';
+
+@Injectable()
+export class AppService {
+  
+  constructor(private readonly prisma: PrismaService) {}
+
+  async calcularClasificacionABC() {
+    const insumos = await this.prisma.insumo.findMany({
+      include: {
+        recetas: {
+          include: {
+            producto: {
+              include: { ventas: true },
+            },
+          },
+        },
+      },
+    });
+
+    const listaConsumo = insumos.map((insumo) => {
+      let consumoTotal = 0;
+      
+      insumo.recetas.forEach((receta) => {
+        const totalVendido = receta.producto.ventas.reduce((acc, v) => acc + v.cantidad, 0);
+        consumoTotal += totalVendido * Number(receta.cantidad);
+      });
+
+      return {
+        id: insumo.id,
+        nombre: insumo.nombre,
+        valorInversion: consumoTotal * Number(insumo.precioActual),
+      };
+    });
+
+    listaConsumo.sort((a, b) => b.valorInversion - a.valorInversion);
+    const inversionTotal = listaConsumo.reduce((acc, item) => acc + item.valorInversion, 0);
+    
+    let acumulado = 0;
+    const resultados: any[] = [];
+
+    for (const item of listaConsumo) {
+      const porcentaje = inversionTotal > 0 ? (item.valorInversion / inversionTotal) * 100 : 0;
+      acumulado += porcentaje;
+
+      let nuevaCategoria: 'A' | 'B' | 'C' = 'C';
+      if (acumulado <= 80) nuevaCategoria = 'A';
+      else if (acumulado <= 95) nuevaCategoria = 'B';
+
+      await this.prisma.insumo.update({
+        where: { id: item.id },
+        data: { categoria: nuevaCategoria },
+      });
+
+      resultados.push({ ...item, categoria: nuevaCategoria });
+    }
+
+    return { 
+      mensaje: 'Clasificación ABC completada con éxito', 
+      totalInsumos: resultados.length,
+      detalle: resultados 
+    };
+  }
+}
