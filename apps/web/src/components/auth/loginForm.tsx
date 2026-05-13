@@ -3,14 +3,22 @@ import { PizzaIcon } from '@/components/icons/PizzaIcon';
 import { BeerIcon } from '@/components/icons/BeerIcon';
 import { ChevronDown, CircleFill, Eye, EyeSlash, Globe } from '@gravity-ui/icons';
 import { Button, Card, Form, Input, Label, Link, TextField, InputGroup, Chip } from '@heroui/react';
-import { useState } from 'react';
+import { useState, useActionState, useEffect } from 'react';
+import { loginAction } from '@/actions/auth.actions';
+import { useRouter } from 'next/navigation';
 
 export const LoginForm = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [state, formAction, isPending] = useActionState(loginAction, { error: null, success: false });
+  const router = useRouter();
+
   const toggleVisibility = () => setIsVisible(!isVisible);
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
+
+  useEffect(() => {
+    if (state?.success) {
+      router.push('/app');
+    }
+  }, [state?.success, router]);
 
   return (
     <div className="w-full max-w-md">
@@ -35,9 +43,16 @@ export const LoginForm = () => {
         </Card.Header>
 
         {/* Content y footer */}
-        <Form onSubmit={handleSubmit}>
+        <Form action={formAction}>
           {/* Inputs */}
           <Card.Content className="flex flex-col gap-5 px-8 w-full">
+            {/* Error Message */}
+            {state?.error && (
+              <div className="bg-danger-soft text-danger text-xs p-3 rounded-md border">
+                {state.error}
+              </div>
+            )}
+
             {/* Correo */}
             <TextField name="email" type="email" className="flex flex-col gap-1.5 w-full">
               <Label className="text-xs font-bold uppercase tracking-widest">
@@ -68,6 +83,7 @@ export const LoginForm = () => {
                 variant="secondary"
               >
                 <InputGroup.Input
+                  name="password"
                   placeholder="••••••••"
                   required
                   type={isVisible ? 'text' : 'password'}
@@ -92,12 +108,13 @@ export const LoginForm = () => {
 
           {/* Boton */}
           <Card.Footer className="px-8 pb-8 pt-8 w-full">
-            <Button type="submit" className="w-full h-12">
-              Iniciar sesión
+            <Button type="submit" className="w-full h-12" isPending={isPending}>
+              {isPending ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Button>
           </Card.Footer>
         </Form>
       </Card>
+
 
       {/* estatus */}
       <div className="mt-6 flex flex-col items-center gap-2">
