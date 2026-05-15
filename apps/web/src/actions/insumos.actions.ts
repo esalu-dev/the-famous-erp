@@ -1,16 +1,16 @@
 "use server";
 
-// no se como lo tengan en la bd
 export interface Insumo {
   id?: string;
   nombre: string;
   tipo: string;
-  unidad: string;
+  unidadMedida: string; 
   cantidadActual: number;
   cantidadMinima: number;
   precioActual: number;
-  proveedor: string;
-  foto?: File | null; 
+  categoria?: string;  
+  //proveedor?: string;   
+  imagenUrl?: string | null; 
 }
 
 export async function saveInsumoAction(formData: FormData): Promise<{ success: boolean; message: string; data?: any }> {

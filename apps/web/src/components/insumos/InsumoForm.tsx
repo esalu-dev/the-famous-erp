@@ -55,7 +55,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                     />
                   </TextField>
 
-                  {/* Fila: Tipo y Unidad */}
+                  {/* Fila: Tipo y UnidadMedida */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Select 
                       className="w-full" 
@@ -76,9 +76,9 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
                     <Select 
                       className="w-full" 
-                      name="unidad" 
+                      name="unidadMedida" 
                       placeholder="Selecciona una unidad"
-                      defaultSelectedKey={insumoAEditar?.unidad}
+                      defaultSelectedKey={insumoAEditar?.unidadMedida}
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest">Unidad</Label>
                       <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md" />
@@ -130,7 +130,6 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       className="w-full" 
                       name="proveedor" 
                       placeholder="Selecciona un proveedor"
-                      defaultSelectedKey={insumoAEditar?.proveedor}
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest">Proveedor</Label>
                       <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md" />
