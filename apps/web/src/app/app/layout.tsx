@@ -18,24 +18,34 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <section className="mt-10 w-full">
           <ul className="flex flex-col gap-2">
             <li>
-              <SidebarButton icon={<ChartColumnStacked />} selected>
+              <SidebarButton icon={<ChartColumnStacked />} selected route="/app">
                 Inicio
               </SidebarButton>
             </li>
             <li>
-              <SidebarButton icon={<FileDollar />}>Precios</SidebarButton>
+              <SidebarButton icon={<FileDollar />} route="/precios">
+                Precios
+              </SidebarButton>
             </li>
             <li>
-              <SidebarButton icon={<ShoppingCart />}>Insumos</SidebarButton>
+              <SidebarButton icon={<ShoppingCart />} route="/app/insumos">
+                Insumos
+              </SidebarButton>
             </li>
             <li>
-              <SidebarButton icon={<Thunderbolt />}>Servicios</SidebarButton>
+              <SidebarButton icon={<Thunderbolt />} route="/app/servicios">
+                Servicios
+              </SidebarButton>
             </li>
             <li>
-              <SidebarButton icon={<ShoppingBasket />}>Productos</SidebarButton>
+              <SidebarButton icon={<ShoppingBasket />} route="/app/productos">
+                Productos
+              </SidebarButton>
             </li>
             <li>
-              <SidebarButton icon={<Trolley />}>Proveedores</SidebarButton>
+              <SidebarButton icon={<Trolley />} route="/app/proveedores">
+                Proveedores
+              </SidebarButton>
             </li>
           </ul>
         </section>
