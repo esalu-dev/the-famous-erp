@@ -8,6 +8,7 @@ import {
   Thunderbolt,
   Trolley,
 } from '@gravity-ui/icons';
+import { Separator } from '@heroui/react';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -50,8 +51,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           </ul>
         </section>
       </aside>
-      <main className="flex flex-col outline relative w-full">
+      <main className="flex flex-col relative w-full">
         <TopBar />
+        <Separator />
         <div className="px-6 py-4">{children}</div>
       </main>
     </div>

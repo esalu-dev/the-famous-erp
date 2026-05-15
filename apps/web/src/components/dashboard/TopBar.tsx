@@ -3,7 +3,7 @@ import { Avatar, Button, Separator } from '@heroui/react';
 
 export function TopBar() {
   return (
-    <div className="flex h-16 justify-end items-center gap-6 px-4 py-4 outline w-full">
+    <div className="flex h-16 justify-end items-center gap-6 px-4 py-4 w-full">
       <Button isIconOnly variant="ghost" size="lg">
         <Bell />
       </Button>
