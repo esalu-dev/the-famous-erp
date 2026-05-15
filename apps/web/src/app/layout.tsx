@@ -20,8 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning> 
-      <body className={`${manrope.className} antialiased bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300`}>
+    <html lang="es" suppressHydrationWarning>
+      <body
+        className={`${manrope.className} antialiased bg-[var(--background)] text-[var(--foreground)]`}
+      >
         <ThemeProvider attribute="class" defaultTheme="light">
           {children}
         </ThemeProvider>
