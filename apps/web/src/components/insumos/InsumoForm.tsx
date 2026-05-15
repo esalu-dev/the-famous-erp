@@ -64,12 +64,24 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       defaultSelectedKey={insumoAEditar?.tipo} 
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest">Tipo</Label>
-                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md" />
+                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md flex justify-between items-center">
+                        <Select.Value />
+                        <Select.Indicator />
+                      </Select.Trigger>
                       <Select.Popover>
                         <ListBox>
-                          <ListBox.Item id="comida" textValue="Comida">Comida</ListBox.Item>
-                          <ListBox.Item id="bebida" textValue="Bebida">Bebida</ListBox.Item>
-                          <ListBox.Item id="limpieza" textValue="Limpieza">Limpieza</ListBox.Item>
+                          <ListBox.Item id="comida" textValue="Comida">
+                            Comida
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                          <ListBox.Item id="bebida" textValue="Bebida">
+                            Bebida
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                          <ListBox.Item id="limpieza" textValue="Limpieza">
+                            Limpieza
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
                         </ListBox>
                       </Select.Popover>
                     </Select>
@@ -81,12 +93,24 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       defaultSelectedKey={insumoAEditar?.unidadMedida}
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest">Unidad</Label>
-                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md" />
+                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md flex justify-between items-center">
+                        <Select.Value />
+                        <Select.Indicator />
+                      </Select.Trigger>
                       <Select.Popover>
                         <ListBox>
-                          <ListBox.Item id="gramos" textValue="Gramos (g)">Gramos (g)</ListBox.Item>
-                          <ListBox.Item id="mililitros" textValue="Mililitros (ml)">Mililitros (ml)</ListBox.Item>
-                          <ListBox.Item id="piezas" textValue="Piezas (pz)">Piezas (pz)</ListBox.Item>
+                          <ListBox.Item id="gramos" textValue="Gramos (g)">
+                            Gramos (g)
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                          <ListBox.Item id="mililitros" textValue="Mililitros (ml)">
+                            Mililitros (ml)
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                          <ListBox.Item id="piezas" textValue="Piezas (pz)">
+                            Piezas (pz)
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
                         </ListBox>
                       </Select.Popover>
                     </Select>
@@ -132,11 +156,20 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       placeholder="Selecciona un proveedor"
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest">Proveedor</Label>
-                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md" />
+                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md flex justify-between items-center">
+                        <Select.Value />
+                        <Select.Indicator />
+                      </Select.Trigger>
                       <Select.Popover>
                         <ListBox>
-                          <ListBox.Item id="lacteos_express" textValue="Lácteos Express">Lácteos Express</ListBox.Item>
-                          <ListBox.Item id="distribuidora_norte" textValue="Distribuidora Norte">Distribuidora Norte</ListBox.Item>
+                          <ListBox.Item id="lacteos_express" textValue="Lácteos Express">
+                            Lácteos Express
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                          <ListBox.Item id="distribuidora_norte" textValue="Distribuidora Norte">
+                            Distribuidora Norte
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
                         </ListBox>
                       </Select.Popover>
                     </Select>
