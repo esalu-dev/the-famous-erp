@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class AppService {
-  
-  constructor(private readonly prisma: PrismaService) {}
 
+  private readonly logger = new Logger(AppService.name)
+  constructor(private readonly prisma: PrismaService) { }
+
+  @Cron('0 2 * * *', {
+    timeZone: 'America/Mexico_City'
+  })
   async calcularClasificacionABC() {
     const insumos = await this.prisma.insumo.findMany({
       include: {
@@ -21,7 +26,7 @@ export class AppService {
 
     const listaConsumo = insumos.map((insumo) => {
       let consumoTotal = 0;
-      
+
       insumo.recetas.forEach((receta) => {
         const totalVendido = receta.producto.ventas.reduce((acc, v) => acc + v.cantidad, 0);
         consumoTotal += totalVendido * Number(receta.cantidad);
@@ -36,7 +41,7 @@ export class AppService {
 
     listaConsumo.sort((a, b) => b.valorInversion - a.valorInversion);
     const inversionTotal = listaConsumo.reduce((acc, item) => acc + item.valorInversion, 0);
-    
+
     let acumulado = 0;
     const resultados: any[] = [];
 
@@ -56,10 +61,11 @@ export class AppService {
       resultados.push({ ...item, categoria: nuevaCategoria });
     }
 
-    return { 
-      mensaje: 'Clasificación ABC completada con éxito', 
+    this.logger.log('Clasificación ABC completada');
+    return {
+      mensaje: 'Clasificación ABC completada con éxito',
       totalInsumos: resultados.length,
-      detalle: resultados 
+      detalle: resultados
     };
   }
 }

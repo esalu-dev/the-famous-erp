@@ -17,32 +17,44 @@ services:
       timeout: 5s
       retries: 5
 
-  # auth-service:
-  #   build:
-  #     context: ./apps/auth-service
-  #     dockerfile: Dockerfile
-  #   container_name: auth-service
-  #   restart: unless-stopped
-  #   env_file: .env
-  #   ports:
-  #     - "${AUTH_SERVICE_PORT}:3001"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-
-  # web:
-  #   build:
-  #     context: ./apps/web
-  #     dockerfile: Dockerfile
-  #   container_name: web
-  #   restart: unless-stopped
-  #   env_file: .env
-  #   ports:
-  #     - "${WEB_PORT}:3000"
-  #   environment:
-  #     - NEXT_PUBLIC_AUTH_SERVICE_URL=http://auth-service:3001
-  #   depends_on:
-  #     - auth-service
+#  auth-service:
+#    build:
+#      context: ./apps/auth-service
+#      dockerfile: Dockerfile
+#    container_name: auth-service
+#    restart: unless-stopped
+#    env_file: .env
+#    ports:
+#      - "${AUTH_SERVICE_PORT}:3001"
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#  web:
+#    build:
+#      context: ./apps/web
+#      dockerfile: Dockerfile
+#    container_name: web
+#    restart: unless-stopped
+#    env_file: .env
+#    ports:
+#      - "${WEB_PORT}:3000"
+#    environment:
+#      - NEXT_PUBLIC_AUTH_SERVICE_URL=http://auth-service:3001
+#    depends_on:
+#      - auth-service
+#
+#  inventory-service:
+#    build:
+#      context: ./apps/inventory-service
+#      dockerfile: Dockerfile
+#    container_name: inventory-service
+#    restart: unless-stopped
+#    env_file: .env
+#    ports:
+#      - "${INVENTORY_SERVICE_PORT}:3002"
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
 
 volumes:
   postgres_data:
