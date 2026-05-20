@@ -12,7 +12,7 @@ export function SidebarButton({
   route: string;
 }) {
   return (
-    <Button className={`w-full h-12 text-left ${selected && 'font-bold text-yellow-600'}`}>
+    <Button className={`w-full h-12 text-left bg-white text-gray-600 ${selected && 'font-bold text-focus'}`}>
       {icon}
       <p className="text-left w-full">{children}</p>
       <a href={route} className="absolute inset-0 z-0" />
