@@ -46,13 +46,17 @@ jobs:
           echo "TAG=$DYNAMIC_TAG" >> $GITHUB_OUTPUT
           echo "Etiqueta dinámica generada: $DYNAMIC_TAG"
 
-      - name: Ejecutar Linter (Calidad de Código)
-        run: npm run lint
-
-      - name: Generar Cliente Prisma y Compilar Proyecto (Turborepo)
+      - name: Generar Cliente Prisma (Turborepo)
         env:
           DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/${{ env.DEFAULT_DATABASE_NAME }}'
         run: |
           echo "Generando base de datos cliente usando: $DATABASE_URL"
           npm run db:generate
-          npm run build
+
+      - name: Ejecutar Linter (Calidad de Código)
+        run: npm run lint
+
+      - name: Compilar Proyecto (Turborepo)
+        env:
+          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/${{ env.DEFAULT_DATABASE_NAME }}'
+        run: npm run build
