@@ -45,7 +45,7 @@ export class ProveedoresService {
 
     return this.prisma.proveedor.update({
       where: { id },
-      data: { estado: 'Inactivo' }, 
+      data: { estado: 'Inactivo' },
     });
   }
 }

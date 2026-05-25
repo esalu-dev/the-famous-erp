@@ -1,8 +1,8 @@
 import {
   CategoriaABC,
   InsumoTipo,
-  UnidadMedida
-} from "@the-famous-erp/database-client";
+  UnidadMedida,
+} from '@the-famous-erp/database-client';
 
 export class CreateInsumoDto {
   nombre!: string;

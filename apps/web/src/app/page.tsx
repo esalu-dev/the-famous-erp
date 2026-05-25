@@ -3,8 +3,17 @@ import { config } from '@/lib/config';
 
 export default async function Home() {
   console.log(config.services.auth);
-  const res = await fetch(`${config.services.auth}/health`);
-  const data = await res.json();
+  let data = { status: 'offline' };
+  try {
+    const res = await fetch(`${config.services.auth}/health`, {
+      next: { revalidate: 60 }
+    });
+    if (res.ok) {
+      data = await res.json();
+    }
+  } catch (error) {
+    console.warn("Auth service is offline during build or runtime:", error);
+  }
   return (
     <div className="flex flex-col max-w-xl mx-auto mt-20">
       <h1 className="text-3xl font-bold">The Famous ERP</h1>
