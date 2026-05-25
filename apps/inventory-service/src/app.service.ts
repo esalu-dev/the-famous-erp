@@ -4,12 +4,11 @@ import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class AppService {
-
-  private readonly logger = new Logger(AppService.name)
-  constructor(private readonly prisma: PrismaService) { }
+  private readonly logger = new Logger(AppService.name);
+  constructor(private readonly prisma: PrismaService) {}
 
   @Cron('0 2 * * *', {
-    timeZone: 'America/Mexico_City'
+    timeZone: 'America/Mexico_City',
   })
   async calcularClasificacionABC() {
     const insumos = await this.prisma.insumo.findMany({
@@ -28,7 +27,10 @@ export class AppService {
       let consumoTotal = 0;
 
       insumo.recetas.forEach((receta) => {
-        const totalVendido = receta.producto.ventas.reduce((acc, v) => acc + v.cantidad, 0);
+        const totalVendido = receta.producto.ventas.reduce(
+          (acc, v) => acc + v.cantidad,
+          0,
+        );
         consumoTotal += totalVendido * Number(receta.cantidad);
       });
 
@@ -40,13 +42,17 @@ export class AppService {
     });
 
     listaConsumo.sort((a, b) => b.valorInversion - a.valorInversion);
-    const inversionTotal = listaConsumo.reduce((acc, item) => acc + item.valorInversion, 0);
+    const inversionTotal = listaConsumo.reduce(
+      (acc, item) => acc + item.valorInversion,
+      0,
+    );
 
     let acumulado = 0;
     const resultados: any[] = [];
 
     for (const item of listaConsumo) {
-      const porcentaje = inversionTotal > 0 ? (item.valorInversion / inversionTotal) * 100 : 0;
+      const porcentaje =
+        inversionTotal > 0 ? (item.valorInversion / inversionTotal) * 100 : 0;
       acumulado += porcentaje;
 
       let nuevaCategoria: 'A' | 'B' | 'C' = 'C';
@@ -65,7 +71,7 @@ export class AppService {
     return {
       mensaje: 'Clasificación ABC completada con éxito',
       totalInsumos: resultados.length,
-      detalle: resultados
+      detalle: resultados,
     };
   }
 }

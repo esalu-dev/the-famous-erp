@@ -13,7 +13,7 @@ export interface Insumo {
   imagenUrl?: string | null; 
 }
 
-export async function saveInsumoAction(formData: FormData): Promise<{ success: boolean; message: string; data?: any }> {
+export async function saveInsumoAction(formData: FormData): Promise<{ success: boolean; message: string; data?: unknown }> {
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
   const nombre = formData.get("nombre");

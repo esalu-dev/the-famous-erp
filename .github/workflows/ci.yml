@@ -1,0 +1,59 @@
+name: 'The Famous Pizza ERP'
+
+on:
+  pull_request:
+    branches: [develop]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  GLOBAL_LOG_LEVEL: 'info'
+  DEFAULT_DATABASE_NAME: 'the_famous_erp_test'
+
+jobs:
+  build-and-lint:
+    name: 'compilación y linting'
+    runs-on: ubuntu-latest
+
+    outputs:
+      release_tag: ${{ steps.generate_tag.outputs.TAG }}
+
+    steps:
+      - name: Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: Mostrar Información del Disparador
+        run: |
+          echo "Ejecución iniciada por el usuario: ${{ github.actor }}"
+          echo "Evento disparador: ${{ github.event_name }}"
+          echo "Número de ejecución del workflow: #${{ github.run_number }}"
+          echo "Commit SHA: ${{ github.sha }}"
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Instalar Dependencias
+        run: npm ci
+
+      - name: Generar Etiqueta de Versión Única
+        id: generate_tag
+        run: |
+          # Generamos un tag dinámico basado en la fecha y el run_number
+          DYNAMIC_TAG="v1.0.${{ github.run_number }}-$(date +'%Y%m%d')"
+          echo "TAG=$DYNAMIC_TAG" >> $GITHUB_OUTPUT
+          echo "Etiqueta dinámica generada: $DYNAMIC_TAG"
+
+      - name: Generar Cliente Prisma (Turborepo)
+        env:
+          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/${{ env.DEFAULT_DATABASE_NAME }}'
+        run: |
+          echo "Generando base de datos cliente usando: $DATABASE_URL"
+          npm run db:generate
+
+      - name: Compilar Proyecto (Turborepo)
+        env:
+          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/${{ env.DEFAULT_DATABASE_NAME }}'
+        run: npm run build

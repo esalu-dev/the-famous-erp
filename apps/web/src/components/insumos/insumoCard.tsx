@@ -1,5 +1,5 @@
 import {Button, Card, Chip} from "@heroui/react";
-import {ArrowUp, Pencil} from '@gravity-ui/icons';
+import {Pencil} from '@gravity-ui/icons';
 
 export function InsumoCard({
     titulo,
@@ -32,6 +32,7 @@ export function InsumoCard({
   return (
     <Card className="w-full h-[400px] overflow-hidden">
       <div className="relative w-full h-full overflow-hidden rounded-2xl">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           alt="Cherries"
           className="absolute inset-0 w-full h-full object-cover"

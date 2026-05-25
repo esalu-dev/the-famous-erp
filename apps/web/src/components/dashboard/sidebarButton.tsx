@@ -1,4 +1,4 @@
-import { Button, Link } from '@heroui/react';
+import { Button } from '@heroui/react';
 
 export function SidebarButton({
   children,
