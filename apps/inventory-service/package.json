@@ -1,5 +1,5 @@
 {
-  "name": "@the-famous-erp/analytics-service",
+  "name": "@the-famous-erp/inventory-service",
   "version": "0.0.1",
   "description": "",
   "license": "UNLICENSED",
@@ -21,6 +21,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.2",
+    "@nestjs/mapped-types": "^2.1.1",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^6.1.3",
