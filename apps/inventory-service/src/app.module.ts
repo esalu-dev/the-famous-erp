@@ -4,10 +4,11 @@ import { AppService } from './app.service';
 import { PrismaService } from './prisma/prisma.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ProveedoresModule } from './proveedores/proveedores.module';
+import { InsumosModule } from './insumos/insumos.module';
 
 
 @Module({
-  imports: [ScheduleModule.forRoot(), ProveedoresModule],
+  imports: [InsumosModule, ProveedoresModule, ScheduleModule.forRoot()],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
