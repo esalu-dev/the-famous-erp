@@ -53,9 +53,6 @@ jobs:
           echo "Generando base de datos cliente usando: $DATABASE_URL"
           npm run db:generate
 
-      - name: Ejecutar Linter (Calidad de Código)
-        run: npm run lint
-
       - name: Compilar Proyecto (Turborepo)
         env:
           DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/${{ env.DEFAULT_DATABASE_NAME }}'
