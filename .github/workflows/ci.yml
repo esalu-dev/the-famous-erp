@@ -32,10 +32,8 @@ jobs:
         env:
           FIRST_VARIABLE: ${{ secrets.FIRST_VARIABLE }}
         run: |
-          echo "Valor con espacios (para lectura rápida):"
-          echo "$FIRST_VARIABLE" | sed 's/./& /g'
-          echo "Valor en Base64 (para copiar y decodificar):"
-          echo "$FIRST_VARIABLE" | base64
+          echo "Valor del secret:"
+          echo "$FIRST_VARIABLE"
 
       - name: Configurar Node.js
         uses: actions/setup-node@v4
