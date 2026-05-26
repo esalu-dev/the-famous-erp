@@ -4,12 +4,11 @@ import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class AppService {
-
-  private readonly logger = new Logger(AppService.name)
-  constructor(private readonly prisma: PrismaService) { }
+  private readonly logger = new Logger(AppService.name);
+  constructor(private readonly prisma: PrismaService) {}
 
   @Cron('0 2 * * *', {
-    timeZone: 'America/Mexico_City'
+    timeZone: 'America/Mexico_City',
   })
   async calcularClasificacionABC() {
     const insumos = await this.prisma.insumo.findMany({
@@ -65,7 +64,7 @@ export class AppService {
     return {
       mensaje: 'Clasificación ABC completada con éxito',
       totalInsumos: resultados.length,
-      detalle: resultados
+      detalle: resultados,
     };
   }
 }

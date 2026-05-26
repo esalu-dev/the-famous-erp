@@ -6,9 +6,8 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isLoginPage = pathname === '/login';
-  const isPublicAsset = pathname.startsWith('/_next') || 
-                        pathname.startsWith('/api') || 
-                        pathname === '/favicon.ico';
+  const isPublicAsset =
+    pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico';
 
   if (isPublicAsset) {
     return NextResponse.next();

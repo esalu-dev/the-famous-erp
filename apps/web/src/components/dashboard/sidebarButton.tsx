@@ -1,4 +1,4 @@
-import { Button, Link } from '@heroui/react';
+import { Button } from '@heroui/react';
 
 export function SidebarButton({
   children,
@@ -12,7 +12,9 @@ export function SidebarButton({
   route: string;
 }) {
   return (
-    <Button className={`w-full h-12 text-left bg-white text-gray-600 ${selected && 'font-bold text-focus'}`}>
+    <Button
+      className={`w-full h-12 text-left bg-white text-gray-600 ${selected && 'font-bold text-focus'}`}
+    >
       {icon}
       <p className="text-left w-full">{children}</p>
       <a href={route} className="absolute inset-0 z-0" />

@@ -2,10 +2,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient, PrismaPg } from '@the-famous-erp/database-client';
 
 @Injectable()
-export class PrismaService
-  extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy
-{
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
     super({
       adapter: new PrismaPg({
@@ -15,10 +12,10 @@ export class PrismaService
   }
 
   async onModuleInit() {
-    await (this as any).$connect();
+    await this.$connect();
   }
 
   async onModuleDestroy() {
-    await (this as any).$disconnect();
+    await this.$disconnect();
   }
 }
