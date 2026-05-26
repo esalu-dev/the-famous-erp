@@ -20,15 +20,38 @@ export async function saveInsumoAction(
 ): Promise<{ success: boolean; message: string; data?: unknown }> {
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  const nombre = formData.get('nombre');
-
-  if (!nombre) {
-    throw new Error('El nombre del insumo es obligatorio');
+  console.log('Datos recibidos en el servidor:', Object.fromEntries(formData.entries()));
+  formData.delete('foto');
+  formData.delete('categoria');
+  // TODO: Eliminar esta línea cuando se implemente la gestión de proveedores
+  formData.delete('proveedor');
+  try {
+    const res = await fetch(`${config.services.inventory}/insumos`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(Object.fromEntries(formData.entries())),
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error('Error response from API:', errorData);
+      return {
+        success: false,
+        message: errorData.message || 'Error al guardar el insumo',
+      };
+    }
+  } catch (error) {
+    console.error('Error saving insumo:', error);
+    return {
+      success: false,
+      message: 'Error al guardar el insumo',
+    };
   }
 
   return {
     success: true,
-    message: `Insumo "${nombre}" guardado correctamente`,
+    message: `Insumo guardado correctamente`,
   };
 }
 

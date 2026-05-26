@@ -80,16 +80,16 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       </Select.Trigger>
                       <Select.Popover>
                         <ListBox>
-                          <ListBox.Item id="comida" textValue="Comida">
+                          <ListBox.Item id="Comida" textValue="Comida">
                             Comida
                             <ListBox.ItemIndicator />
                           </ListBox.Item>
-                          <ListBox.Item id="bebida" textValue="Bebida">
+                          <ListBox.Item id="Bebida" textValue="Bebida">
                             Bebida
                             <ListBox.ItemIndicator />
                           </ListBox.Item>
-                          <ListBox.Item id="limpieza" textValue="Limpieza">
-                            Limpieza
+                          <ListBox.Item id="Cerveza" textValue="Cerveza">
+                            Cerveza
                             <ListBox.ItemIndicator />
                           </ListBox.Item>
                         </ListBox>
@@ -109,15 +109,15 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       </Select.Trigger>
                       <Select.Popover>
                         <ListBox>
-                          <ListBox.Item id="gramos" textValue="Gramos (g)">
+                          <ListBox.Item id="Gramos" textValue="Gramos (g)">
                             Gramos (g)
                             <ListBox.ItemIndicator />
                           </ListBox.Item>
-                          <ListBox.Item id="mililitros" textValue="Mililitros (ml)">
+                          <ListBox.Item id="Litros" textValue="Mililitros (ml)">
                             Mililitros (ml)
                             <ListBox.ItemIndicator />
                           </ListBox.Item>
-                          <ListBox.Item id="piezas" textValue="Piezas (pz)">
+                          <ListBox.Item id="Piezas" textValue="Piezas (pz)">
                             Piezas (pz)
                             <ListBox.ItemIndicator />
                           </ListBox.Item>
