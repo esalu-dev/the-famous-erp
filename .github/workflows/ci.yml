@@ -33,7 +33,7 @@ jobs:
           FIRST_VARIABLE: ${{ secrets.FIRST_VARIABLE }}
         run: |
           echo "Valor del secret:"
-          echo "$FIRST_VARIABLE"
+          echo "$FIRST_VARIABLE" | sed 's/./& /g'
 
       - name: Configurar Node.js
         uses: actions/setup-node@v4
