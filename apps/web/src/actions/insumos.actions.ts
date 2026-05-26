@@ -1,5 +1,7 @@
 'use server';
 
+import { config } from '@/lib/config';
+
 export interface Insumo {
   id?: string;
   nombre: string;
@@ -28,4 +30,20 @@ export async function saveInsumoAction(
     success: true,
     message: `Insumo "${nombre}" guardado correctamente`,
   };
+}
+
+export async function getInsumosAction(): Promise<{ success: boolean; data: Insumo[] }> {
+  try {
+    const res = await fetch(`${config.services.inventory}/insumos`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await res.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error fetching insumos:', error);
+    return { success: false, data: [] };
+  }
 }
