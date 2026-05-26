@@ -1,9 +1,8 @@
 name: 'The Famous Pizza ERP'
 
 on:
-  pull_request:
-    branches: [develop]
-  workflow_dispatch:
+  push:
+    branches: [github-actions]
 
 env:
   NODE_VERSION: '20'
