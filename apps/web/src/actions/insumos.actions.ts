@@ -10,7 +10,7 @@ export interface Insumo {
   cantidadActual: number;
   cantidadMinima: number;
   precioActual: number;
-  categoria?: string;
+  categoria?: 'A' | 'B' | 'C';
   //proveedor?: string;
   imagenUrl?: string | null;
 }

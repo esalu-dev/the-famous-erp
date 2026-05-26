@@ -7,12 +7,14 @@ export function InsumoCard({
   precio,
   stock,
   unidad,
+  imagenUrl,
 }: {
   titulo?: string;
   categoria?: 'A' | 'B' | 'C';
   precio?: number;
   stock?: number;
   unidad?: string;
+  imagenUrl?: string | null;
 }) {
   const categoryStyles = {
     A: {
@@ -30,14 +32,17 @@ export function InsumoCard({
   } as const;
 
   return (
-    <Card className="w-full h-[400px] overflow-hidden">
+    <Card className="w-full h-100 overflow-hidden">
       <div className="relative w-full h-full overflow-hidden rounded-2xl">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           alt="Cherries"
           className="absolute inset-0 w-full h-full object-cover"
           loading="lazy"
-          src="https://recetaselite.com/wp-content/uploads/2023/12/20260316_2106_Image-Generation_simple_compose_01kkw426e2fbg8zd871vtwv3qe.png"
+          src={
+            imagenUrl ||
+            'https://recetaselite.com/wp-content/uploads/2023/12/20260316_2106_Image-Generation_simple_compose_01kkw426e2fbg8zd871vtwv3qe.png'
+          }
         />
       </div>
       <div className="flex flex-1 flex-col gap-3">
@@ -59,8 +64,7 @@ export function InsumoCard({
           <div className="gap-1">
             <span className="text-xs text-muted">Stock Actual</span>
             <div className="justify-between text-sm font-semibold">
-              <span>{stock}</span>
-              <span>{unidad} </span>
+              <span>{stock}</span> <span>{unidad} </span>
             </div>
           </div>
           <Button className="w-full">
