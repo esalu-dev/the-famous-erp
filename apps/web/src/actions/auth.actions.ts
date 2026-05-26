@@ -28,7 +28,7 @@ export async function loginAction(prevState: unknown, formData: FormData) {
       try {
         const errorData = await response.json();
         errorMessage = errorData.message || errorMessage;
-      } catch  {
+      } catch {
         // Si no es JSON, mantenemos el error genérico
       }
       return { error: errorMessage };

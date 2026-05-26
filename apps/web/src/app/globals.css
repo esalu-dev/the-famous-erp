@@ -1,35 +1,35 @@
-@import "tailwindcss";
-@import "@heroui/styles";
+@import 'tailwindcss';
+@import '@heroui/styles';
 
 :root,
 .light,
 .default,
-[data-theme="light"],
-[data-theme="default"] {
+[data-theme='light'],
+[data-theme='default'] {
   /* Theme Colors (Light Mode) */
   --accent: oklch(45.41% 0.0884 236.62);
   --accent-foreground: oklch(99.11% 0 0);
   --background: oklch(97.02% 0.0066 236.62);
-  --border: oklch(90.00% 0.0066 236.62);
+  --border: oklch(90% 0.0066 236.62);
   --danger: oklch(65.32% 0.2359 23.67);
   --danger-foreground: oklch(99.11% 0 0);
-  --default: oklch(94.00% 0.0066 236.62);
+  --default: oklch(94% 0.0066 236.62);
   --default-foreground: oklch(21.03% 0.0059 236.62);
-  --field-background: oklch(100.00% 0.0033 236.62);
+  --field-background: oklch(100% 0.0033 236.62);
   --field-foreground: oklch(21.03% 0.0066 236.62);
   --field-placeholder: oklch(55.17% 0.0132 236.62);
   --focus: oklch(45.41% 0.0884 236.62);
   --foreground: oklch(21.03% 0.0066 236.62);
   --muted: oklch(55.17% 0.0132 236.62);
-  --overlay: oklch(100.00% 0.0020 236.62);
+  --overlay: oklch(100% 0.002 236.62);
   --overlay-foreground: oklch(21.03% 0.0066 236.62);
-  --scrollbar: oklch(87.10% 0.0066 236.62);
-  --segment: oklch(100.00% 0.0066 236.62);
+  --scrollbar: oklch(87.1% 0.0066 236.62);
+  --segment: oklch(100% 0.0066 236.62);
   --segment-foreground: oklch(21.03% 0.0066 236.62);
-  --separator: oklch(92.00% 0.0066 236.62);
+  --separator: oklch(92% 0.0066 236.62);
   --success: oklch(73.29% 0.1961 148.74);
   --success-foreground: oklch(21.03% 0.0059 148.74);
-  --surface: oklch(100.00% 0.0033 236.62);
+  --surface: oklch(100% 0.0033 236.62);
   --surface-foreground: oklch(21.03% 0.0066 236.62);
   --surface-secondary: oklch(95.24% 0.0053 236.62);
   --surface-secondary-foreground: oklch(21.03% 0.0066 236.62);
@@ -48,34 +48,34 @@
 }
 
 .dark,
-[data-theme="dark"] {
+[data-theme='dark'] {
   color-scheme: dark;
   /* Theme Colors (Dark Mode) */
   --accent: oklch(45.41% 0.0884 236.62);
   --accent-foreground: oklch(99.11% 0 0);
-  --background: oklch(12.00% 0.0066 236.62);
-  --border: oklch(28.00% 0.0066 236.62);
-  --danger: oklch(59.40% 0.1993 22.56);
+  --background: oklch(12% 0.0066 236.62);
+  --border: oklch(28% 0.0066 236.62);
+  --danger: oklch(59.4% 0.1993 22.56);
   --danger-foreground: oklch(99.11% 0 0);
-  --default: oklch(27.40% 0.0066 236.62);
+  --default: oklch(27.4% 0.0066 236.62);
   --default-foreground: oklch(99.11% 0 0);
   --field-background: oklch(21.03% 0.0132 236.62);
   --field-foreground: oklch(99.11% 0.0066 236.62);
-  --field-placeholder: oklch(70.50% 0.0132 236.62);
+  --field-placeholder: oklch(70.5% 0.0132 236.62);
   --focus: oklch(45.41% 0.0884 236.62);
   --foreground: oklch(99.11% 0.0066 236.62);
-  --muted: oklch(70.50% 0.0132 236.62);
+  --muted: oklch(70.5% 0.0132 236.62);
   --overlay: oklch(21.03% 0.0132 236.62);
   --overlay-foreground: oklch(99.11% 0.0066 236.62);
-  --scrollbar: oklch(70.50% 0.0066 236.62);
+  --scrollbar: oklch(70.5% 0.0066 236.62);
   --segment: oklch(39.64% 0.0066 236.62);
   --segment-foreground: oklch(99.11% 0.0066 236.62);
-  --separator: oklch(25.00% 0.0066 236.62);
+  --separator: oklch(25% 0.0066 236.62);
   --success: oklch(73.29% 0.1961 148.74);
   --success-foreground: oklch(21.03% 0.0059 148.74);
   --surface: oklch(21.03% 0.0132 236.62);
   --surface-foreground: oklch(99.11% 0.0066 236.62);
-  --surface-secondary: oklch(25.70% 0.0099 236.62);
+  --surface-secondary: oklch(25.7% 0.0099 236.62);
   --surface-secondary-foreground: oklch(99.11% 0.0066 236.62);
   --surface-tertiary: oklch(27.21% 0.0099 236.62);
   --surface-tertiary-foreground: oklch(99.11% 0.0066 236.62);

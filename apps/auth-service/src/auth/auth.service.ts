@@ -19,9 +19,7 @@ export class AuthService {
     });
 
     if (userExists) {
-      throw new BadRequestException(
-        '¡Ya existe un usuario asociado a este correo, inicia sesión!',
-      );
+      throw new BadRequestException('¡Ya existe un usuario asociado a este correo, inicia sesión!');
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);

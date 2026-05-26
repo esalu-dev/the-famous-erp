@@ -6,10 +6,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ProveedoresModule } from './proveedores/proveedores.module';
 import { InsumosModule } from './insumos/insumos.module';
 
-
 @Module({
   imports: [InsumosModule, ProveedoresModule, ScheduleModule.forRoot()],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
-export class AppModule { }
+export class AppModule {}

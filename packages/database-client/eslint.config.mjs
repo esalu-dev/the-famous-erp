@@ -1,15 +1,16 @@
 // @ts-check
 import tseslint from 'typescript-eslint';
-import nestConfig from '../../tooling/eslint/nest.mjs';
+import baseConfig from '../../tooling/eslint/base.mjs';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs', 'dist/**'],
+    ignores: ['eslint.config.mjs', 'dist/**', 'prisma/**', 'src/generated/**'],
   },
-  ...nestConfig,
+  ...baseConfig,
   {
     languageOptions: {
       parserOptions: {
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
