@@ -8,6 +8,7 @@ export function InsumoCard({
   stock,
   unidad,
   imagenUrl,
+  onEdit,
 }: {
   titulo?: string;
   categoria?: 'A' | 'B' | 'C';
@@ -15,6 +16,7 @@ export function InsumoCard({
   stock?: number;
   unidad?: string;
   imagenUrl?: string | null;
+  onEdit?: () => void;
 }) {
   const categoryStyles = {
     A: {
@@ -67,7 +69,7 @@ export function InsumoCard({
               <span>{stock}</span> <span>{unidad} </span>
             </div>
           </div>
-          <Button className="w-full">
+          <Button className="w-full" onPress={onEdit}>
             <Pencil />
             Actualizar
           </Button>

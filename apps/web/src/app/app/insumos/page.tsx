@@ -1,6 +1,5 @@
-import { InsumoCard } from '@/components/insumos/insumoCard';
 import { CategoryTags } from '@/components/insumos/categoriaTags';
-import { AddInsumoButton } from '@/components/insumos/AddInsumoButton';
+import { InsumosGrid } from '@/components/insumos/InsumosGrid';
 import { getInsumosAction } from '@/actions/insumos.actions';
 
 export default async function InsumosPage() {
@@ -22,20 +21,8 @@ export default async function InsumosPage() {
       <div className="mt-6">
         <CategoryTags categories={categories} />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
-        {insumos.data?.map((insumo) => (
-          <InsumoCard
-            key={insumo.id}
-            titulo={insumo.nombre}
-            categoria={insumo.categoria}
-            precio={insumo.precioActual}
-            stock={insumo.cantidadActual}
-            unidad={insumo.unidadMedida}
-          />
-        ))}
-      </div>
 
-      <AddInsumoButton />
+      <InsumosGrid insumos={insumos.data || []} />
     </div>
   );
 }

@@ -19,8 +19,10 @@ export interface Insumo {
 export async function saveInsumoAction(
   formData: FormData,
 ): Promise<{ success: boolean; message: string; data?: unknown }> {
+  // Simular latencia de red para demostrar el spinner de carga
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
+  const id = formData.get('id') as string | null;
   const nombre = formData.get('nombre') as string;
   const tipo = formData.get('tipo') as string;
   const unidadMedida = formData.get('unidadMedida') as string;
@@ -57,26 +59,32 @@ export async function saveInsumoAction(
   };
 
   try {
-    const res = await fetch(`${config.services.inventory}/insumos`, {
-      method: 'POST',
+    const url = id
+      ? `${config.services.inventory}/insumos/${id}`
+      : `${config.services.inventory}/insumos`;
+    const method = id ? 'PATCH' : 'POST';
+
+    const res = await fetch(url, {
+      method,
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
     });
+
     if (!res.ok) {
       const errorData = await res.json();
       console.error('Error response from API:', errorData);
       return {
         success: false,
-        message: errorData.message || 'Error al guardar el insumo',
+        message: errorData.message || `Error al ${id ? 'actualizar' : 'guardar'} el insumo`,
       };
     }
   } catch (error) {
     console.error('Error saving insumo:', error);
     return {
       success: false,
-      message: 'Error al guardar el insumo',
+      message: `Error al ${id ? 'actualizar' : 'guardar'} el insumo`,
     };
   }
 
@@ -84,7 +92,45 @@ export async function saveInsumoAction(
 
   return {
     success: true,
-    message: `Insumo "${nombre}" guardado correctamente`,
+    message: `Insumo "${nombre}" ${id ? 'actualizado' : 'guardado'} correctamente`,
+  };
+}
+
+export async function deleteInsumoAction(
+  id: string,
+): Promise<{ success: boolean; message: string }> {
+  // Simular latencia de red para demostrar el spinner de carga
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  try {
+    const res = await fetch(`${config.services.inventory}/insumos/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error('Error response from API:', errorData);
+      return {
+        success: false,
+        message: errorData.message || 'No se pudo eliminar el insumo',
+      };
+    }
+  } catch (error) {
+    console.error('Error deleting insumo:', error);
+    return {
+      success: false,
+      message: 'Error al intentar eliminar el insumo',
+    };
+  }
+
+  revalidatePath('/app/insumos');
+
+  return {
+    success: true,
+    message: 'Insumo eliminado correctamente',
   };
 }
 
