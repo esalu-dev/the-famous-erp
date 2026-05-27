@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Plus } from '@gravity-ui/icons';
 import { Button } from '@heroui/react';
-import { ProveedorForm } from './ProveedorForm';
+import { ProveedorForm } from './proveedorForm';
 
 export const AddProveedorButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
