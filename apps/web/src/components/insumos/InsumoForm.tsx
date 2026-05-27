@@ -14,6 +14,8 @@ import {
   ListBox,
 } from '@heroui/react';
 import { saveInsumoAction, type Insumo } from '@/actions/insumos.actions';
+import { useRouter } from 'next/navigation';
+import { useTransition, useState } from 'react';
 
 interface InsumoFormProps {
   insumoAEditar?: Insumo | null; // Si se pasa, el form actúa en modo edición
@@ -23,14 +25,40 @@ interface InsumoFormProps {
 
 export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormProps) => {
   const isEditMode = !!insumoAEditar;
+  const router = useRouter();
+  const [, startTransition] = useTransition();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    if (isSubmitting) return;
 
-    toast.promise(saveInsumoAction(formData), {
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    setIsSubmitting(true);
+
+    const savePromise = saveInsumoAction(formData)
+      .then((response) => {
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        return response;
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+
+    toast.promise(savePromise, {
       loading: isEditMode ? 'Actualizando insumo...' : 'Guardando insumo...',
-      success: (response) => response.message,
+      success: (response) => {
+        onOpenChange(false);
+        form.reset();
+        startTransition(() => {
+          router.refresh();
+        });
+        return response.message;
+      },
       error: (err) => err.message || 'Ocurrió un error inesperado',
     });
   };
@@ -55,9 +83,10 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
               <Surface variant="default">
                 <form id="insumo-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
                   {/* Nombre */}
-                  <TextField className="w-full" name="nombre" isRequired>
+                  <TextField className="w-full" name="nombre" isRequired isDisabled={isSubmitting}>
                     <Label className="text-xs font-bold uppercase tracking-widest">Nombre</Label>
                     <Input
+                      name="nombre"
                       placeholder="Ej. Queso Mozzarella"
                       variant="secondary"
                       className="h-11 px-3 text-sm"
@@ -72,6 +101,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       name="tipo"
                       placeholder="Selecciona un tipo"
                       defaultSelectedKey={insumoAEditar?.tipo}
+                      isDisabled={isSubmitting}
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest">Tipo</Label>
                       <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md flex justify-between items-center">
@@ -101,6 +131,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       name="unidadMedida"
                       placeholder="Selecciona una unidad"
                       defaultSelectedKey={insumoAEditar?.unidadMedida}
+                      isDisabled={isSubmitting}
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest">Unidad</Label>
                       <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md flex justify-between items-center">
@@ -128,11 +159,12 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
                   {/* Fila: Cantidad Actual y Mínima */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <TextField className="w-full" name="cantidadActual" isRequired>
+                    <TextField className="w-full" name="cantidadActual" isRequired isDisabled={isSubmitting}>
                       <Label className="text-xs font-bold uppercase tracking-widest">
                         Cantidad Actual
                       </Label>
                       <Input
+                        name="cantidadActual"
                         placeholder="0"
                         type="number"
                         min={0}
@@ -142,11 +174,12 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       />
                     </TextField>
 
-                    <TextField className="w-full" name="cantidadMinima" isRequired>
+                    <TextField className="w-full" name="cantidadMinima" isRequired isDisabled={isSubmitting}>
                       <Label className="text-xs font-bold uppercase tracking-widest">
                         Cantidad Mínima (Alertas)
                       </Label>
                       <Input
+                        name="cantidadMinima"
                         placeholder="0"
                         type="number"
                         min={0}
@@ -159,7 +192,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
                   {/* Fila: Precio y Proveedor */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <TextField className="w-full" name="precioActual" isRequired>
+                    <TextField className="w-full" name="precioActual" isRequired isDisabled={isSubmitting}>
                       <Label className="text-xs font-bold uppercase tracking-widest">
                         Precio Actual
                       </Label>
@@ -171,6 +204,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                           $
                         </InputGroup.Prefix>
                         <InputGroup.Input
+                          name="precioActual"
                           className="w-full text-sm pl-2"
                           type="number"
                           step="0.01"
@@ -189,6 +223,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       className="w-full"
                       name="proveedor"
                       placeholder="Selecciona un proveedor"
+                      isDisabled={isSubmitting}
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest">
                         Proveedor
@@ -213,11 +248,12 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                   </div>
 
                   {/* Foto (Upload) */}
-                  <TextField className="w-full" name="foto">
+                  <TextField className="w-full" name="foto" isDisabled={isSubmitting}>
                     <Label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                       <Camera className="text-muted size-4" /> Foto del Insumo
                     </Label>
                     <Input
+                      name="foto"
                       type="file"
                       accept="image/*"
                       className="h-11 px-3 text-sm flex items-center pt-2 bg-surface-secondary rounded-md cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
@@ -234,10 +270,17 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                 variant="ghost"
                 className="text-muted"
                 onPress={() => onOpenChange(false)}
+                isDisabled={isSubmitting}
               >
                 Cancelar
               </Button>
-              <Button type="submit" form="insumo-form" variant="primary">
+              <Button
+                type="submit"
+                form="insumo-form"
+                variant="primary"
+                isPending={isSubmitting}
+                isDisabled={isSubmitting}
+              >
                 {isEditMode ? 'Guardar Cambios' : 'Guardar'}
               </Button>
             </Modal.Footer>

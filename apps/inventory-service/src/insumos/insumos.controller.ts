@@ -19,7 +19,6 @@ export class InsumosController {
 
   @Post()
   create(@Body() dto: CreateInsumoDto) {
-    console.log('DTO recibido en el controlador:', dto);
     return this.insumosService.create(dto);
   }
 

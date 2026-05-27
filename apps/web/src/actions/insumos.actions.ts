@@ -1,6 +1,7 @@
 'use server';
 
 import { config } from '@/lib/config';
+import { revalidatePath } from 'next/cache';
 
 export interface Insumo {
   id?: string;
@@ -20,18 +21,48 @@ export async function saveInsumoAction(
 ): Promise<{ success: boolean; message: string; data?: unknown }> {
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  console.log('Datos recibidos en el servidor:', Object.fromEntries(formData.entries()));
-  formData.delete('foto');
-  formData.delete('categoria');
-  // TODO: Eliminar esta línea cuando se implemente la gestión de proveedores
-  formData.delete('proveedor');
+  const nombre = formData.get('nombre') as string;
+  const tipo = formData.get('tipo') as string;
+  const unidadMedida = formData.get('unidadMedida') as string;
+  const cantidadActualRaw = formData.get('cantidadActual');
+  const cantidadMinimaRaw = formData.get('cantidadMinima');
+  const precioActualRaw = formData.get('precioActual');
+
+  if (!nombre || !tipo || !unidadMedida) {
+    return {
+      success: false,
+      message: 'Todos los campos obligatorios deben ser completados.',
+    };
+  }
+
+  const cantidadActual = cantidadActualRaw ? Number(cantidadActualRaw) : 0;
+  const cantidadMinima = cantidadMinimaRaw ? Number(cantidadMinimaRaw) : 0;
+  const precioActual = precioActualRaw ? Number(precioActualRaw) : 0;
+
+  if (isNaN(cantidadActual) || isNaN(cantidadMinima) || isNaN(precioActual)) {
+    return {
+      success: false,
+      message: 'Los valores de cantidad y precio deben ser numéricos.',
+    };
+  }
+
+  const payload = {
+    nombre,
+    tipo,
+    unidadMedida,
+    cantidadActual,
+    cantidadMinima,
+    precioActual,
+    categoria: 'C', // Default category required by database
+  };
+
   try {
     const res = await fetch(`${config.services.inventory}/insumos`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(Object.fromEntries(formData.entries())),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       const errorData = await res.json();
@@ -49,9 +80,11 @@ export async function saveInsumoAction(
     };
   }
 
+  revalidatePath('/app/insumos');
+
   return {
     success: true,
-    message: `Insumo guardado correctamente`,
+    message: `Insumo "${nombre}" guardado correctamente`,
   };
 }
 
