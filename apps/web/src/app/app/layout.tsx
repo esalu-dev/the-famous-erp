@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   Thunderbolt,
   Trolley,
+  Person,
 } from '@gravity-ui/icons';
 import { Separator } from '@heroui/react';
 import logo from '../../../public/logo.png';
@@ -54,6 +55,11 @@ export default async function MainLayout({ children }: { children: React.ReactNo
               <li>
                 <SidebarButton icon={<Trolley />} route="/app/proveedores">
                   Proveedores
+                </SidebarButton>
+              </li>
+              <li>
+                <SidebarButton icon={<Person />} route="/app/empleados">
+                  Empleados
                 </SidebarButton>
               </li>
             </ul>
