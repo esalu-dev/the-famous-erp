@@ -14,7 +14,7 @@ export const AddProveedorButton = () => {
       <Button
         isIconOnly
         size="lg"
-        className="absolute right-6 bottom-6 bg-primary text-primary-foreground shadow-md"
+        className="fixed right-6 bottom-6 bg-primary text-primary-foreground shadow-xl"
         onPress={() => setIsModalOpen(true)}
       >
         <Plus width={20} height={20} />
