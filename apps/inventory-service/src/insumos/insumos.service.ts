@@ -43,8 +43,9 @@ export class InsumosService {
       return await this.prisma.insumo.delete({
         where: { id },
       });
-    } catch (error: any) {
-      if (error.code === 'P2003') {
+    } catch (error) {
+      const prismaError = error as { code?: string };
+      if (prismaError?.code === 'P2003') {
         throw new ConflictException(
           'No se puede eliminar el insumo porque está asociado a recetas, mermas o proveedores activos.',
         );

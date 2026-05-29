@@ -9,10 +9,15 @@ import {
   Trolley,
 } from '@gravity-ui/icons';
 import { Separator } from '@heroui/react';
+import { getSession } from '@/lib/auth';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default async function MainLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
+
   return (
-    <div className="flex min-h-dvh max-w-dvw relative">
+    <AuthProvider initialUser={session}>
+      <div className="flex min-h-dvh max-w-dvw relative">
       <aside className="sticky top-0 flex h-dvh w-80 flex-col px-6 py-8 items-center bg-white">
         <h3 className="text-start px-8 text-xl text-focus font-bold">The Famous Pizza and Beer</h3>
         <p className="text-start text-gray-600 mt-2 text-xs">Enterprise Resource Planner</p>
@@ -57,5 +62,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className="px-6 py-4">{children}</div>
       </main>
     </div>
+    </AuthProvider>
   );
 }

@@ -1,6 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { config } from '@/lib/config';
 
 export async function loginAction(prevState: unknown, formData: FormData) {
@@ -55,4 +56,10 @@ export async function loginAction(prevState: unknown, formData: FormData) {
     console.error('Login Action Error:', error);
     return { error: 'No se pudo conectar con el servicio de autenticación' };
   }
+}
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+  cookieStore.delete('session_token');
+  redirect('/login');
 }
