@@ -1,0 +1,17 @@
+name: 'The Famous Pizza ERP - Main Pipeline'
+
+on:
+  push:
+    branches: [github-actions]
+  pull_request:
+    branches: [github-actions]
+
+jobs:
+  variables:
+    name: 'Variables'
+    uses: ./.github/workflows/variables.yml
+    secrets: inherit
+
+  build:
+    name: 'Compilación'
+    uses: ./.github/workflows/build.yml

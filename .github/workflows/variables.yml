@@ -1,8 +1,7 @@
-name: 'Información y Variables'
+name: 'Sub-workflow: Información y Variables'
 
 on:
-  push:
-    branches: [github-actions]
+  workflow_call:
 
 env:
   NODE_VERSION: '20'
