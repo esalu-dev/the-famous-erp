@@ -1,0 +1,32 @@
+name: 'Información y Variables'
+
+on:
+  push:
+    branches: [github-actions]
+
+env:
+  NODE_VERSION: '20'
+  GLOBAL_LOG_LEVEL: 'info'
+
+jobs:
+  debug-vars:
+    name: 'Mostrar Información y Variables'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: Mostrar Información del Disparador
+        run: |
+          echo "Ejecución iniciada por el usuario: ${{ github.actor }}"
+          echo "Evento disparador: ${{ github.event_name }}"
+          echo "Número de ejecución del workflow: #${{ github.run_number }}"
+          echo "Commit SHA: ${{ github.sha }}"
+
+      - name: Imprimir Secret
+        env:
+          FIRST_VARIABLE: ${{ secrets.FIRST_VARIABLE }}
+        run: |
+          echo "Valor del secret:"
+          echo "$FIRST_VARIABLE" | sed 's/./& /g'
