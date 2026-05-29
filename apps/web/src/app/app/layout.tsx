@@ -9,17 +9,24 @@ import {
   Trolley,
 } from '@gravity-ui/icons';
 import { Separator } from '@heroui/react';
+import logo from '../../../public/logo.png';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh max-w-dvw relative">
-      <aside className="sticky top-0 flex h-dvh w-80 flex-col px-6 py-8 items-center bg-white">
-        <h3 className="text-start px-8 text-xl text-focus font-bold">The Famous Pizza and Beer</h3>
+      <aside className="sticky top-0 flex h-dvh w-80 flex-col px-6 py-8 items-center bg-surface">
+        <div>
+          <img
+            src={logo.src}
+            alt="Logo de The Famous Pizza and Beer"
+            className="h-24 w-auto"
+          />
+        </div>
         <p className="text-start text-gray-600 mt-2 text-xs">Enterprise Resource Planner</p>
         <section className="mt-10 w-full">
           <ul className="flex flex-col gap-2">
             <li>
-              <SidebarButton icon={<ChartColumnStacked />} selected route="/app">
+              <SidebarButton icon={<ChartColumnStacked />} route="/app">
                 Inicio
               </SidebarButton>
             </li>
