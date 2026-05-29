@@ -27,10 +27,7 @@ export class AppService {
       let consumoTotal = 0;
 
       insumo.recetas.forEach((receta) => {
-        const totalVendido = receta.producto.ventas.reduce(
-          (acc, v) => acc + v.cantidad,
-          0,
-        );
+        const totalVendido = receta.producto.ventas.reduce((acc, v) => acc + v.cantidad, 0);
         consumoTotal += totalVendido * Number(receta.cantidad);
       });
 
@@ -42,17 +39,13 @@ export class AppService {
     });
 
     listaConsumo.sort((a, b) => b.valorInversion - a.valorInversion);
-    const inversionTotal = listaConsumo.reduce(
-      (acc, item) => acc + item.valorInversion,
-      0,
-    );
+    const inversionTotal = listaConsumo.reduce((acc, item) => acc + item.valorInversion, 0);
 
     let acumulado = 0;
     const resultados: any[] = [];
 
     for (const item of listaConsumo) {
-      const porcentaje =
-        inversionTotal > 0 ? (item.valorInversion / inversionTotal) * 100 : 0;
+      const porcentaje = inversionTotal > 0 ? (item.valorInversion / inversionTotal) * 100 : 0;
       acumulado += porcentaje;
 
       let nuevaCategoria: 'A' | 'B' | 'C' = 'C';
