@@ -39,59 +39,42 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
     setIsSubmitting(true);
 
-    const savePromise = saveInsumoAction(formData)
+    saveInsumoAction(formData)
       .then((response) => {
         if (!response.success) {
           throw new Error(response.message);
         }
+        onOpenChange(false);
         return response;
       })
       .finally(() => {
         setIsSubmitting(false);
       });
-
-    toast.promise(savePromise, {
-      loading: isEditMode ? 'Actualizando insumo...' : 'Guardando insumo...',
-      success: (response) => {
-        onOpenChange(false);
-        form.reset();
-        startTransition(() => {
-          router.refresh();
-        });
-        return response.message;
-      },
-      error: (err) => err.message || 'Ocurrió un error inesperado',
-    });
   };
 
-  const confirmDelete = () => {
-    if (!insumoAEditar?.id || isSubmitting) return;
+  const confirmDelete = (): Promise<{ success: boolean; message: string }> => {
+    if (!insumoAEditar?.id || isSubmitting)
+      return Promise.resolve({
+        success: false,
+        message: 'ID de insumo no válido o acción en progreso',
+      });
 
     setIsConfirmOpen(false);
     setIsSubmitting(true);
 
-    const deletePromise = deleteInsumoAction(insumoAEditar.id)
+    deleteInsumoAction(insumoAEditar.id)
       .then((response) => {
         if (!response.success) {
           throw new Error(response.message);
         }
+        onOpenChange(false);
         return response;
       })
       .finally(() => {
         setIsSubmitting(false);
       });
 
-    toast.promise(deletePromise, {
-      loading: 'Eliminando insumo...',
-      success: (response) => {
-        onOpenChange(false);
-        startTransition(() => {
-          router.refresh();
-        });
-        return response.message;
-      },
-      error: (err) => err.message || 'Ocurrió un error inesperado al eliminar',
-    });
+    return Promise.resolve({ success: true, message: 'Insumo eliminado correctamente' });
   };
 
   return (
@@ -118,7 +101,12 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                     {isEditMode && <input type="hidden" name="id" value={insumoAEditar.id} />}
 
                     {/* Nombre */}
-                    <TextField className="w-full" name="nombre" isRequired isDisabled={isSubmitting}>
+                    <TextField
+                      className="w-full"
+                      name="nombre"
+                      isRequired
+                      isDisabled={isSubmitting}
+                    >
                       <Label className="text-xs font-bold uppercase tracking-widest">Nombre</Label>
                       <Input
                         name="nombre"
@@ -168,7 +156,9 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         defaultSelectedKey={insumoAEditar?.unidadMedida}
                         isDisabled={isSubmitting}
                       >
-                        <Label className="text-xs font-bold uppercase tracking-widest">Unidad</Label>
+                        <Label className="text-xs font-bold uppercase tracking-widest">
+                          Unidad
+                        </Label>
                         <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md flex justify-between items-center">
                           <Select.Value />
                           <Select.Indicator />
@@ -194,7 +184,12 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
                     {/* Fila: Cantidad Actual y Mínima */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <TextField className="w-full" name="cantidadActual" isRequired isDisabled={isSubmitting}>
+                      <TextField
+                        className="w-full"
+                        name="cantidadActual"
+                        isRequired
+                        isDisabled={isSubmitting}
+                      >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Actual
                         </Label>
@@ -209,7 +204,12 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         />
                       </TextField>
 
-                      <TextField className="w-full" name="cantidadMinima" isRequired isDisabled={isSubmitting}>
+                      <TextField
+                        className="w-full"
+                        name="cantidadMinima"
+                        isRequired
+                        isDisabled={isSubmitting}
+                      >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Mínima (Alertas)
                         </Label>
@@ -227,7 +227,12 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
                     {/* Fila: Precio y Proveedor */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <TextField className="w-full" name="precioActual" isRequired isDisabled={isSubmitting}>
+                      <TextField
+                        className="w-full"
+                        name="precioActual"
+                        isRequired
+                        isDisabled={isSubmitting}
+                      >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Precio Actual
                         </Label>
@@ -358,7 +363,8 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                   <strong className="text-foreground">{insumoAEditar?.nombre}</strong>?
                 </p>
                 <p className="text-xs text-danger/80 mt-3 font-semibold bg-danger-soft/20 p-2.5 rounded border border-danger-soft/30">
-                  * Nota: Esta acción fallará si el insumo está siendo utilizado en alguna receta, merma o producto.
+                  * Nota: Esta acción fallará si el insumo está siendo utilizado en alguna receta,
+                  merma o producto.
                 </p>
               </Modal.Body>
 
