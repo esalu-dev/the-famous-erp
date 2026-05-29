@@ -1,26 +1,18 @@
 // @ts-check
-import eslint from '@eslint/js';
-import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import baseConfig from '../../tooling/eslint/base.mjs';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs', 'dist/', 'node_modules/', 'src/generated/'],
+    ignores: ['eslint.config.mjs', 'dist/**', 'prisma/**', 'src/generated/**'],
   },
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...baseConfig,
   {
     languageOptions: {
-      globals: {
-        ...globals.node,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
-      sourceType: 'module',
-    },
-  },
-  {
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },
 );

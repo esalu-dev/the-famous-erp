@@ -14,13 +14,7 @@
       "outputs": ["coverage/**"]
     },
     "lint": {},
-    "db:generate": {
-      "cache": false,
-      "env": ["DATABASE_URL"]
-    },
-    "db:migrate":  {
-      "cache": false,
-      "env": ["DATABASE_URL"]
-    }
+    "db:generate": { "cache": false },
+    "db:migrate": { "cache": false }
   }
 }

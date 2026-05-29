@@ -9,7 +9,10 @@ import { useRouter } from 'next/navigation';
 
 export const LoginForm = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [state, formAction, isPending] = useActionState(loginAction, { error: null, success: false });
+  const [state, formAction, isPending] = useActionState(loginAction, {
+    error: null,
+    success: false,
+  });
   const router = useRouter();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -114,7 +117,6 @@ export const LoginForm = () => {
           </Card.Footer>
         </Form>
       </Card>
-
 
       {/* estatus */}
       <div className="mt-6 flex flex-col items-center gap-2">

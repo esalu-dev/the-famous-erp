@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { CreateInsumoDto } from './dto/create-insumo.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateInsumoDto } from './dto/update-insumo.dto';
+
 @Injectable()
 export class InsumosService {
   constructor(private readonly prisma: PrismaService) {}
@@ -38,8 +39,18 @@ export class InsumosService {
   }
 
   async delete(id: string) {
-    return await this.prisma.insumo.delete({
-      where: { id },
-    });
+    try {
+      return await this.prisma.insumo.delete({
+        where: { id },
+      });
+    } catch (error) {
+      const prismaError = error as { code?: string };
+      if (prismaError?.code === 'P2003') {
+        throw new ConflictException(
+          'No se puede eliminar el insumo porque está asociado a recetas, mermas o proveedores activos.',
+        );
+      }
+      throw error;
+    }
   }
 }

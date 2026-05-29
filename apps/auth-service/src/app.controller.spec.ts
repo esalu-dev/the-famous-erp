@@ -14,10 +14,9 @@ describe('AppController', () => {
     appController = app.get<AppController>(AppController);
   });
 
-  describe('health', () => {
-    it('should return status ok', () => {
-      const result = appController.health();
-      expect(result.status).toBe('ok');
+  describe('root', () => {
+    it('should return health status', () => {
+      expect(appController.health().status).toBe('ok');
     });
   });
 });
