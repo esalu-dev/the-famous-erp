@@ -4,7 +4,7 @@ on:
   workflow_call:
     outputs:
       release_tag:
-        description: "El tag de versión generado"
+        description: 'El tag de versión generado'
         value: ${{ jobs.build.outputs.release_tag }}
 
 env:
@@ -52,3 +52,6 @@ jobs:
         env:
           DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/${{ env.DEFAULT_DATABASE_NAME }}'
         run: npm run build
+
+      - name: Linting
+        run: npm run lint
