@@ -10,7 +10,7 @@ export class ServiciosService {
     if (!datos.nombre || datos.nombre.trim() === '')
       throw new BadRequestException('El nombre del servicio es obligatorio');
 
-    if (datos.costo === null || datos.costo === undefined)
+    if (datos.costo === null || datos.costo === undefined || datos.costo === '')
       throw new BadRequestException('El costo del servicio es obligatorio para el registro');
 
     if (!datos.periodicidad)
@@ -51,10 +51,14 @@ export class ServiciosService {
   async update(id: string, datos: Prisma.ServicioUpdateInput): Promise<Servicio> {
     await this.findOne(id);
 
-    if (!datos.nombre || datos.nombre.trim() === '')
+    if (
+      datos.nombre !== undefined &&
+      typeof datos.nombre === 'string' &&
+      datos.nombre.trim() === ''
+    )
       throw new BadRequestException('El nombre del servicio es obligatorio');
 
-    if (datos.costo === null || datos.costo.toString().trim() === '' || datos.costo === undefined)
+    if (datos.costo === null || datos.costo === undefined || datos.costo === '')
       throw new BadRequestException('El costo del servicio es obligatorio para el registro');
 
     if (!datos.periodicidad)
@@ -63,22 +67,27 @@ export class ServiciosService {
     if (!datos.proximoPago)
       throw new BadRequestException('Debes especficar la fecha del próximo pago del servicio');
 
+    const datosActualizados: Prisma.ServicioUpdateInput = { ...datos };
+
+    if (datos.proximoPago) {
+      const fecha = new Date(datos.proximoPago as string | Date);
+      if (isNaN(fecha.getTime()))
+        throw new BadRequestException('Ingresa una fecha válida para el próximo pago del servicio');
+      datosActualizados.proximoPago = fecha;
+    }
+
     try {
       return await this.prisma.servicio.update({
         where: { id },
-        data: {
-          ...datos,
-          proximoPago: new Date(datos.proximoPago),
-          activo: datos.activo !== undefined ? datos.activo : true,
-        },
+        data: datosActualizados,
       });
     } catch (error: any) {
       throw new BadRequestException('Error al actualizar el servicio: ' + error);
     }
   }
 
-  async delete(id: string): Promise<Servicio> {
-    return this.prisma.servicio.delete({
+  async delete(id: string): Promise<void> {
+    await this.prisma.servicio.delete({
       where: { id },
     });
   }
