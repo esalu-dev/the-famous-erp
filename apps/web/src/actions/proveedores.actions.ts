@@ -15,7 +15,7 @@ export interface Proveedor {
 
 export async function saveProveedorAction(
   formData: FormData,
-): Promise<{ success: boolean; message: string; data?: any }> {
+): Promise<{ success: boolean; message: string; data?: unknown }> {
   // Simulacion de una llamada a una API
   await new Promise((resolve) => setTimeout(resolve, 1500));
 

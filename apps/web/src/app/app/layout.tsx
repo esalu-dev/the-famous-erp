@@ -10,11 +10,17 @@ import {
 } from '@gravity-ui/icons';
 import { Separator } from '@heroui/react';
 import logo from '../../../public/logo.png';
+import { getSession } from '@/lib/auth';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default async function MainLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
+
   return (
-    <div className="flex min-h-dvh max-w-dvw relative">
-      <aside className="sticky top-0 flex h-dvh w-80 flex-col px-6 py-8 items-center bg-surface">
+    <AuthProvider initialUser={session}>
+     <div className="flex min-h-dvh max-w-dvw relative">
+      <div className="flex min-h-dvh max-w-dvw relative">
+       <aside className="sticky top-0 flex h-dvh w-80 flex-col px-6 py-8 items-center bg-surface">
         <div>
           <img
             src={logo.src}
@@ -64,5 +70,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className="px-6 py-4">{children}</div>
       </main>
     </div>
+    </AuthProvider>
   );
 }
