@@ -57,7 +57,7 @@ export function InsumoCard({
             size="md"
             color={categoria ? categoryStyles[categoria].color : categoryStyles.A.color}
             variant={categoria ? categoryStyles[categoria].variant : categoryStyles.A.variant}
-            className="rounded-full font-bold w-fit"
+            className="rounded-full w-fit"
           >
             Categoría {categoria}
           </Chip>

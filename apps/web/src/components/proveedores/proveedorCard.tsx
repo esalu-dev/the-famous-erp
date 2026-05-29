@@ -35,7 +35,7 @@ export function ProveedorCard({
       <div className="flex flex-col gap-4 p-4">
         <div className="flex items-start gap-4">
           <div className="w-fit h-fit overflow-hidden rounded-2xl bg-accent-soft-hover p-4">
-            <Factory className="text-accent" />
+            <Factory className="text-accent size-5" />
           </div>
           <div className="flex flex-col">
             <Card.Title className="font-bold text-base">{nombre}</Card.Title>
@@ -53,15 +53,15 @@ export function ProveedorCard({
         </div>
         <Card.Footer className="mt-auto flex w-full flex-col items-start gap-3 p-0">
           <div className="flex items-center gap-2">
-            <Boxes3 />
+            <Boxes3 className="text-gray-600"/>
             <span className="text-sm text-gray-600">{tipoProveedor}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Handset />
+            <Handset className="text-gray-600" />
             <span className="text-sm text-gray-600">{telefono}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Envelope />
+            <Envelope className="text-gray-600" />
             <span className="text-sm text-gray-600">{email}</span>
           </div>
           <Button className="w-full">

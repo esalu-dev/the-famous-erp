@@ -1,6 +1,6 @@
-import { AddProveedorButton } from '@/components/proveedores/AddProveedorButton';
-import { ComparadorCard } from '@/components/proveedores/comparadorCard';
-import { ProveedorCard } from '@/components/proveedores/proveedorCard';
+import { AddProveedorButton } from './addProveedorButton';
+import { ComparadorCard } from './comparadorCard';
+import { ProveedorCard } from './proveedorCard';
 
 export function ProveedoresGrid() {
   return (
