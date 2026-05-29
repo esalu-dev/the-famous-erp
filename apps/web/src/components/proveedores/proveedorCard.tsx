@@ -18,14 +18,14 @@ export function ProveedorCard({
     tipoProveedor: string;
     telefono: string;
     email: string;
-    estado: 'activo' | 'inactivo';
+    estado: 'Activo' | 'Inactivo';
 }) {
     const categoryStyles = {
-        activo: {
+        Activo: {
             color: 'accent',
             variant: 'soft',
         },
-        inactivo: {
+        Inactivo: {
             color: 'default',
             variant: 'soft',
         }
@@ -48,8 +48,8 @@ export function ProveedorCard({
                     <div className="ml-auto">
                         <Chip
                             size="md"
-                            color={estado ? categoryStyles[estado].color : categoryStyles.activo.color}
-                            variant={estado ? categoryStyles[estado].variant : categoryStyles.activo.variant}
+                            color={estado ? categoryStyles[estado].color : categoryStyles.Activo.color}
+                            variant={estado ? categoryStyles[estado].variant : categoryStyles.Activo.variant}
                             className="rounded-full font-bold w-fit"
                             >
                             {estado}
