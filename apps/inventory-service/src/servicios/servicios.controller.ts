@@ -1,13 +1,13 @@
 import { Controller, Post, Get, Put, Delete, Body, Param } from '@nestjs/common';
 import { ServiciosService } from './servicios.service';
-import { Servicio } from '@the-famous-erp/database-client';
+import { Prisma } from '@the-famous-erp/database-client';
 
 @Controller('servicios')
 export class ServiciosController {
   constructor(private serviciosService: ServiciosService) {}
 
   @Post()
-  async create(@Body() datos: Omit<Servicio, 'id'>) {
+  async create(@Body() datos: Prisma.ServicioCreateInput) {
     return this.serviciosService.create(datos);
   }
 
@@ -22,7 +22,7 @@ export class ServiciosController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() datos: Omit<Servicio, 'id'>) {
+  async update(@Param('id') id: string, @Body() datos: Prisma.ServicioUpdateInput) {
     return this.serviciosService.update(id, datos);
   }
 

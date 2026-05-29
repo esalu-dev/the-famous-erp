@@ -1,12 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Servicio } from '@the-famous-erp/database-client';
+import { Prisma, Servicio } from '@the-famous-erp/database-client';
 
 @Injectable()
 export class ServiciosService {
   constructor(private prisma: PrismaService) {}
 
-  async create(datos: Omit<Servicio, 'id'>): Promise<Servicio> {
+  async create(datos: Prisma.ServicioCreateInput): Promise<Servicio> {
     if (!datos.nombre || datos.nombre.trim() === '')
       throw new BadRequestException('El nombre del servicio es obligatorio');
 
@@ -48,7 +48,7 @@ export class ServiciosService {
     return servicio;
   }
 
-  async update(id: string, datos: Omit<Servicio, 'id'>): Promise<Servicio> {
+  async update(id: string, datos: Prisma.ServicioUpdateInput): Promise<Servicio> {
     await this.findOne(id);
 
     if (!datos.nombre || datos.nombre.trim() === '')
