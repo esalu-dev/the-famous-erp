@@ -107,7 +107,7 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         Periodicidad
                       </Label>
-                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-default-100 hover:bg-default-200 transition-colors rounded-md flex justify-between items-center">
+                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left text-muted-foreground bg-default-100 hover:bg-default-200 transition-colors rounded-md flex justify-between items-center">
                         <Select.Value />
                         <Select.Indicator />
                       </Select.Trigger>
@@ -153,12 +153,10 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                         className="h-11 flex items-center overflow-hidden w-full"
                         variant="secondary"
                       >
-                        <InputGroup.Prefix className="text-muted font-semibold pl-3">
-                          <Calendar width={16} />
-                        </InputGroup.Prefix>
                         <InputGroup.Input
-                          className="w-full text-sm pl-2 pr-3"
+                          className="w-full text-sm pl-2 pr-3 invalid:[&::-webkit-datetime-edit]:text-default-400 [&::-webkit-calendar-picker-indicator]:opacity-50 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 transition-all"
                           type="date"
+                          required
                           defaultValue={
                             servicioAEditar?.proximoPago
                               ? new Date(servicioAEditar.proximoPago).toISOString().split('T')[0]
