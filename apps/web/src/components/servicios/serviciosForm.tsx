@@ -14,6 +14,7 @@ import {
   ListBox,
   InputGroup,
   Checkbox,
+  TextArea,
 } from '@heroui/react';
 import { saveServicioAction, type Servicio } from '@/actions/servicios.actions';
 
@@ -152,25 +153,24 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                       </InputGroup>
                     </TextField>
 
-                    <TextField className="w-full" name="notas">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <div className="flex flex-col gap-2 w-full">
+                      <Label
+                        htmlFor="notas-textarea"
+                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                      >
                         Notas Adicionales
                       </Label>
-                      <InputGroup
-                        className="h-11 flex items-center overflow-hidden w-full"
+                      <TextArea
+                        id="notas-textarea"
+                        name="notas"
+                        aria-label="Notas Adicionales"
+                        placeholder="Referencia, número de cuenta, etc."
+                        rows={3}
                         variant="secondary"
-                      >
-                        <InputGroup.Prefix className="text-muted font-semibold pl-3">
-                          <Pencil width={16} />
-                        </InputGroup.Prefix>
-                        <InputGroup.Input
-                          className="w-full text-sm pl-2"
-                          type="text"
-                          placeholder="Referencia, número de cuenta, etc."
-                          defaultValue={servicioAEditar?.notas || ''}
-                        />
-                      </InputGroup>
-                    </TextField>
+                        className="w-full text-sm"
+                        defaultValue={servicioAEditar?.notas || ''}
+                      />
+                    </div>
                   </div>
 
                   <hr className="border-border my-2" />
