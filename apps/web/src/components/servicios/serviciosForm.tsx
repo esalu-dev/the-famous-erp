@@ -100,13 +100,14 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                       className="w-full"
                       name="periodicidad"
                       isRequired
+                      variant="secondary"
                       placeholder="Selecciona la periodicidad"
                       defaultSelectedKey={servicioAEditar?.periodicidad || undefined}
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         Periodicidad
                       </Label>
-                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md flex justify-between items-center">
+                      <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-default-100 hover:bg-default-200 transition-colors rounded-md flex justify-between items-center">
                         <Select.Value />
                         <Select.Indicator />
                       </Select.Trigger>
@@ -130,6 +131,20 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <TextField className="w-full" name="notas">
+                      <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                        Notas Adicionales
+                      </Label>
+                      <TextArea
+                        aria-label="Notas Adicionales"
+                        placeholder="Referencia, número de cuenta, etc."
+                        rows={3}
+                        variant="secondary"
+                        className="w-full text-sm"
+                        defaultValue={servicioAEditar?.notas || ''}
+                      />
+                    </TextField>
+
                     <TextField className="w-full" name="proximoPago" isRequired>
                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         Fecha de Próximo Pago
@@ -152,25 +167,6 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                         />
                       </InputGroup>
                     </TextField>
-
-                    <div className="flex flex-col gap-2 w-full">
-                      <Label
-                        htmlFor="notas-textarea"
-                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
-                      >
-                        Notas Adicionales
-                      </Label>
-                      <TextArea
-                        id="notas-textarea"
-                        name="notas"
-                        aria-label="Notas Adicionales"
-                        placeholder="Referencia, número de cuenta, etc."
-                        rows={3}
-                        variant="secondary"
-                        className="w-full text-sm"
-                        defaultValue={servicioAEditar?.notas || ''}
-                      />
-                    </div>
                   </div>
 
                   <hr className="border-border my-2" />
