@@ -10,5 +10,5 @@ export class CreateInsumoDto {
   precioActual!: number;
 
   categoria!: CategoriaABC;
-  imagenUrl?: string;
+  imagenFileName?: string;
 }
