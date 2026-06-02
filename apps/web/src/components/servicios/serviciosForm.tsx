@@ -153,8 +153,8 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                         className="h-11 flex items-center overflow-hidden w-full"
                         variant="secondary"
                       >
-                        <InputGroup.Input
-                          className="w-full text-sm pl-2 pr-3 invalid:[&::-webkit-datetime-edit]:text-default-400 [&::-webkit-calendar-picker-indicator]:opacity-50 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 transition-all"
+                        <input
+                          className="w-full text-sm pl-2 pr-3 bg-transparent border-none outline-none h-full invalid:[&::-webkit-datetime-edit]:text-default-400 [&::-webkit-calendar-picker-indicator]:opacity-50 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 transition-all"
                           type="date"
                           required
                           defaultValue={

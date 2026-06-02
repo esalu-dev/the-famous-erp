@@ -1,4 +1,4 @@
-import { AddProveedorButton } from './addProveedorButton';
+import { AddProveedorButton } from './AddProveedorButton';
 import { ComparadorCard } from './comparadorCard';
 import { ProveedorCard } from './proveedorCard';
 
