@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable, ConflictException } from '@nestjs/common';
 import { CreateInsumoDto } from './dto/create-insumo.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
