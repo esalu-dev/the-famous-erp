@@ -11,4 +11,5 @@ export class CreateInsumoDto {
 
   categoria!: CategoriaABC;
   imagenFileName?: string;
+  proveedorId?: string;
 }

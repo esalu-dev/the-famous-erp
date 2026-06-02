@@ -14,6 +14,7 @@ import {
   toast,
 } from '@heroui/react';
 import { saveInsumoAction, deleteInsumoAction, type Insumo } from '@/actions/insumos.actions';
+import { getProveedoresAction, type Proveedor } from '@/actions/proveedores.actions';
 import { useState, useEffect, useRef } from 'react';
 
 interface InsumoFormProps {
@@ -28,6 +29,15 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+
+  useEffect(() => {
+    getProveedoresAction().then((res) => {
+      if (res.success) {
+        setProveedores(res.data);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (!isOpen) {
@@ -293,8 +303,9 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
                       <Select
                         className="w-full"
-                        name="proveedor"
+                        name="proveedorId"
                         placeholder="Selecciona un proveedor"
+                        defaultSelectedKey={insumoAEditar?.proveedorId}
                         isDisabled={isSubmitting}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
@@ -306,14 +317,12 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         </Select.Trigger>
                         <Select.Popover>
                           <ListBox>
-                            <ListBox.Item id="lacteos_express" textValue="Lácteos Express">
-                              Lácteos Express
-                              <ListBox.ItemIndicator />
-                            </ListBox.Item>
-                            <ListBox.Item id="distribuidora_norte" textValue="Distribuidora Norte">
-                              Distribuidora Norte
-                              <ListBox.ItemIndicator />
-                            </ListBox.Item>
+                            {proveedores.map((p) => (
+                              <ListBox.Item key={p.id} id={p.id} textValue={p.nombre}>
+                                {p.nombre}
+                                <ListBox.ItemIndicator />
+                              </ListBox.Item>
+                            ))}
                           </ListBox>
                         </Select.Popover>
                       </Select>

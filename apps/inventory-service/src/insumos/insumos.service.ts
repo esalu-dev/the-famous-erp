@@ -11,17 +11,32 @@ export class InsumosService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findOne(id: string) {
-    return await this.prisma.insumo.findUnique({
+    const insumo = await this.prisma.insumo.findUnique({
       where: { id },
+      include: {
+        proveedores: true,
+      },
     });
+    if (!insumo) return null;
+    return {
+      ...insumo,
+      proveedorId: insumo.proveedores?.[0]?.proveedorId || undefined,
+    };
   }
 
   async findAll() {
-    return await this.prisma.insumo.findMany({
+    const insumos = await this.prisma.insumo.findMany({
+      include: {
+        proveedores: true,
+      },
       orderBy: {
         nombre: 'asc',
       },
     });
+    return insumos.map((insumo) => ({
+      ...insumo,
+      proveedorId: insumo.proveedores?.[0]?.proveedorId || undefined,
+    }));
   }
 
   async create(dto: CreateInsumoDto) {
@@ -36,7 +51,8 @@ export class InsumosService {
       fileData = (await res.json()) as FileDataResponseDto;
     }
 
-    // modificar dto para que no incluya imagenFileName
+    const proveedorId = dto.proveedorId;
+    delete dto.proveedorId;
     delete dto.imagenFileName;
 
     const dbResult = await this.prisma.insumo.create({
@@ -45,8 +61,23 @@ export class InsumosService {
         imagenUrl: fileData.finalFileUrl,
       },
     });
+
+    if (proveedorId) {
+      await this.prisma.insumoProveedor.create({
+        data: {
+          insumoId: dbResult.id,
+          proveedorId: proveedorId,
+          precioUnitario: dbResult.precioActual,
+          esPreferido: true,
+        },
+      });
+    }
+
     return {
-      insumo: dbResult,
+      insumo: {
+        ...dbResult,
+        proveedorId: proveedorId || undefined,
+      },
       uploadUrl: fileData.uploadUrl,
     };
   }
@@ -65,7 +96,8 @@ export class InsumosService {
       fileData = (await res.json()) as FileDataResponseDto;
     }
 
-    // modificar dto para que no incluya imagenFileName
+    const proveedorId = dto.proveedorId;
+    delete dto.proveedorId;
     delete dto.imagenFileName;
 
     const dataToUpdate: any = { ...dto };
@@ -77,6 +109,22 @@ export class InsumosService {
       where: { id },
       data: dataToUpdate,
     });
+
+    if (proveedorId !== undefined) {
+      await this.prisma.insumoProveedor.deleteMany({
+        where: { insumoId: id },
+      });
+      if (proveedorId) {
+        await this.prisma.insumoProveedor.create({
+          data: {
+            insumoId: id,
+            proveedorId: proveedorId,
+            precioUnitario: dbResult.precioActual,
+            esPreferido: true,
+          },
+        });
+      }
+    }
 
     // Si se generó una nueva imagen y existía una imagen previa, borrar la previa del bucket para no acumular basura
     if (fileData && insumoAnterior?.imagenUrl) {
@@ -94,8 +142,71 @@ export class InsumosService {
     }
 
     return {
-      insumo: dbResult,
+      insumo: {
+        ...dbResult,
+        proveedorId: proveedorId || undefined,
+      },
       uploadUrl: fileData?.uploadUrl || '',
+    };
+  }
+
+  async resurtir(
+    id: string,
+    dto: { cantidad: number; proveedorId: string; precioUnitario?: number },
+  ) {
+    const { cantidad, proveedorId, precioUnitario } = dto;
+
+    const insumoAnterior = await this.prisma.insumo.findUnique({
+      where: { id },
+    });
+
+    const updateData: any = {
+      cantidadActual: {
+        increment: cantidad,
+      },
+    };
+    if (precioUnitario !== undefined && precioUnitario !== null) {
+      updateData.precioActual = precioUnitario;
+    }
+
+    const dbResult = await this.prisma.insumo.update({
+      where: { id },
+      data: updateData,
+    });
+
+    if (proveedorId) {
+      await this.prisma.insumoProveedor.deleteMany({
+        where: { insumoId: id },
+      });
+      await this.prisma.insumoProveedor.create({
+        data: {
+          insumoId: id,
+          proveedorId: proveedorId,
+          precioUnitario: precioUnitario !== undefined ? precioUnitario : dbResult.precioActual,
+          esPreferido: true,
+        },
+      });
+    }
+
+    if (precioUnitario !== undefined && precioUnitario !== null && insumoAnterior) {
+      const firstUser = await this.prisma.usuario.findFirst();
+      if (firstUser) {
+        await this.prisma.precioHistorial.create({
+          data: {
+            insumoId: id,
+            precioAnterior: insumoAnterior.precioActual,
+            precioNuevo: precioUnitario,
+            usuarioId: firstUser.id,
+          },
+        });
+      }
+    }
+
+    return {
+      insumo: {
+        ...dbResult,
+        proveedorId: proveedorId || undefined,
+      },
     };
   }
 
