@@ -9,13 +9,12 @@ import {
   Surface,
   TextField,
   InputGroup,
-  toast,
   Select,
   ListBox,
+  toast,
 } from '@heroui/react';
 import { saveInsumoAction, deleteInsumoAction, type Insumo } from '@/actions/insumos.actions';
-import { useRouter } from 'next/navigation';
-import { useTransition, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface InsumoFormProps {
   insumoAEditar?: Insumo | null; // Si se pasa, el form actúa en modo edición
@@ -25,10 +24,19 @@ interface InsumoFormProps {
 
 export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormProps) => {
   const isEditMode = !!insumoAEditar;
-  const router = useRouter();
-  const [, startTransition] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,62 +44,69 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    formData.set('foto', selectedFile?.name || '');
 
     setIsSubmitting(true);
 
-    const savePromise = saveInsumoAction(formData)
+    saveInsumoAction(formData)
       .then((response) => {
         if (!response.success) {
           throw new Error(response.message);
         }
-        return response;
+        if (response.uploadUrl && selectedFile) {
+          return fetch(response.uploadUrl, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': selectedFile.type,
+            },
+            body: selectedFile,
+          }).then((uploadRes) => {
+            if (!uploadRes.ok) {
+              toast.warning('Insumo guardado, pero hubo un error al subir la imagen');
+            } else {
+              toast.success('Insumo guardado e imagen subida exitosamente');
+            }
+            onOpenChange(false);
+            return response;
+          });
+        } else {
+          toast.success(response.message);
+          onOpenChange(false);
+          return response;
+        }
+      })
+      .catch((error) => {
+        console.error('Error submitting form:', error);
+        toast.danger(error instanceof Error ? error.message : 'Error al procesar la solicitud');
       })
       .finally(() => {
         setIsSubmitting(false);
       });
-
-    toast.promise(savePromise, {
-      loading: isEditMode ? 'Actualizando insumo...' : 'Guardando insumo...',
-      success: (response) => {
-        onOpenChange(false);
-        form.reset();
-        startTransition(() => {
-          router.refresh();
-        });
-        return response.message;
-      },
-      error: (err) => err.message || 'Ocurrió un error inesperado',
-    });
   };
 
-  const confirmDelete = () => {
-    if (!insumoAEditar?.id || isSubmitting) return;
+  const confirmDelete = (): Promise<{ success: boolean; message: string }> => {
+    if (!insumoAEditar?.id || isSubmitting)
+      return Promise.resolve({
+        success: false,
+        message: 'ID de insumo no válido o acción en progreso',
+      });
 
     setIsConfirmOpen(false);
     setIsSubmitting(true);
 
-    const deletePromise = deleteInsumoAction(insumoAEditar.id)
+    deleteInsumoAction(insumoAEditar.id)
       .then((response) => {
         if (!response.success) {
           throw new Error(response.message);
         }
+        onOpenChange(false);
         return response;
       })
       .finally(() => {
         setIsSubmitting(false);
       });
 
-    toast.promise(deletePromise, {
-      loading: 'Eliminando insumo...',
-      success: (response) => {
-        onOpenChange(false);
-        startTransition(() => {
-          router.refresh();
-        });
-        return response.message;
-      },
-      error: (err) => err.message || 'Ocurrió un error inesperado al eliminar',
-    });
+    return Promise.resolve({ success: true, message: 'Insumo eliminado correctamente' });
   };
 
   return (
@@ -118,14 +133,19 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                     {isEditMode && <input type="hidden" name="id" value={insumoAEditar.id} />}
 
                     {/* Nombre */}
-                    <TextField className="w-full" name="nombre" isRequired isDisabled={isSubmitting}>
+                    <TextField
+                      className="w-full"
+                      name="nombre"
+                      isRequired
+                      isDisabled={isSubmitting}
+                      defaultValue={insumoAEditar?.nombre}
+                    >
                       <Label className="text-xs font-bold uppercase tracking-widest">Nombre</Label>
                       <Input
                         name="nombre"
                         placeholder="Ej. Queso Mozzarella"
                         variant="secondary"
                         className="h-11 px-3 text-sm"
-                        defaultValue={insumoAEditar?.nombre}
                       />
                     </TextField>
 
@@ -168,7 +188,9 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         defaultSelectedKey={insumoAEditar?.unidadMedida}
                         isDisabled={isSubmitting}
                       >
-                        <Label className="text-xs font-bold uppercase tracking-widest">Unidad</Label>
+                        <Label className="text-xs font-bold uppercase tracking-widest">
+                          Unidad
+                        </Label>
                         <Select.Trigger className="h-11 px-3 text-sm w-full text-left bg-surface-secondary rounded-md flex justify-between items-center">
                           <Select.Value />
                           <Select.Indicator />
@@ -194,7 +216,13 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
                     {/* Fila: Cantidad Actual y Mínima */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <TextField className="w-full" name="cantidadActual" isRequired isDisabled={isSubmitting}>
+                      <TextField
+                        className="w-full"
+                        name="cantidadActual"
+                        isRequired
+                        isDisabled={isSubmitting}
+                        defaultValue={insumoAEditar?.cantidadActual?.toString()}
+                      >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Actual
                         </Label>
@@ -205,11 +233,16 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                           min={0}
                           variant="secondary"
                           className="h-11 px-3 text-sm"
-                          defaultValue={insumoAEditar?.cantidadActual?.toString()}
                         />
                       </TextField>
 
-                      <TextField className="w-full" name="cantidadMinima" isRequired isDisabled={isSubmitting}>
+                      <TextField
+                        className="w-full"
+                        name="cantidadMinima"
+                        isRequired
+                        isDisabled={isSubmitting}
+                        defaultValue={insumoAEditar?.cantidadMinima?.toString()}
+                      >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Mínima (Alertas)
                         </Label>
@@ -220,14 +253,19 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                           min={0}
                           variant="secondary"
                           className="h-11 px-3 text-sm"
-                          defaultValue={insumoAEditar?.cantidadMinima?.toString()}
                         />
                       </TextField>
                     </div>
 
                     {/* Fila: Precio y Proveedor */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <TextField className="w-full" name="precioActual" isRequired isDisabled={isSubmitting}>
+                      <TextField
+                        className="w-full"
+                        name="precioActual"
+                        isRequired
+                        isDisabled={isSubmitting}
+                        defaultValue={insumoAEditar?.precioActual?.toString()}
+                      >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Precio Actual
                         </Label>
@@ -245,7 +283,6 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                             step="0.01"
                             min={0}
                             placeholder="0.00"
-                            defaultValue={insumoAEditar?.precioActual?.toString()}
                             required
                           />
                           <InputGroup.Suffix className="text-muted text-xs pr-3">
@@ -283,17 +320,56 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                     </div>
 
                     {/* Foto (Upload) */}
-                    <TextField className="w-full" name="foto" isDisabled={isSubmitting}>
-                      <Label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    <div className="w-full flex flex-col gap-2">
+                      <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-foreground">
                         <Camera className="text-muted size-4" /> Foto del Insumo
-                      </Label>
-                      <Input
+                      </label>
+                      
+                      {/* Image Preview */}
+                      {(selectedFile || insumoAEditar?.imagenUrl) && (
+                        <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-surface-secondary mb-2 group shadow-sm">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={selectedFile ? URL.createObjectURL(selectedFile) : (insumoAEditar?.imagenUrl || '')}
+                            alt="Vista previa de foto"
+                            className="w-full h-full object-cover"
+                          />
+                          {selectedFile && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedFile(null);
+                                if (fileInputRef.current) {
+                                  fileInputRef.current.value = '';
+                                }
+                              }}
+                              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                              title="Eliminar imagen seleccionada"
+                            >
+                              <span className="text-xs font-bold text-white bg-danger px-2 py-1 rounded-md transition-colors hover:bg-danger/90">
+                                Quitar
+                              </span>
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      <input
+                        ref={fileInputRef}
                         name="foto"
                         type="file"
                         accept="image/*"
+                        disabled={isSubmitting}
                         className="h-11 px-3 text-sm flex items-center pt-2 bg-surface-secondary rounded-md cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          console.log('Archivo seleccionado:', files);
+                          if (files && files.length > 0) {
+                            setSelectedFile(files[0]);
+                          }
+                        }}
                       />
-                    </TextField>
+                    </div>
                   </form>
                 </Surface>
               </Modal.Body>
@@ -358,7 +434,8 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                   <strong className="text-foreground">{insumoAEditar?.nombre}</strong>?
                 </p>
                 <p className="text-xs text-danger/80 mt-3 font-semibold bg-danger-soft/20 p-2.5 rounded border border-danger-soft/30">
-                  * Nota: Esta acción fallará si el insumo está siendo utilizado en alguna receta, merma o producto.
+                  * Nota: Esta acción fallará si el insumo está siendo utilizado en alguna receta,
+                  merma o producto.
                 </p>
               </Modal.Body>
 

@@ -21,8 +21,6 @@ export async function loginAction(prevState: unknown, formData: FormData) {
       body: JSON.stringify({ correo: email, password }),
     });
 
-    console.log('response:', response);
-
     if (!response.ok) {
       // Intentar obtener el mensaje de error del backend
       let errorMessage = 'Error al iniciar sesión';

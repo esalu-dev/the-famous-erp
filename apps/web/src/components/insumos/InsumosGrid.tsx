@@ -51,11 +51,13 @@ export function InsumosGrid({ insumos }: InsumosGridProps) {
         <Plus className="size-6" />
       </Button>
 
-      <InsumoForm
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        insumoAEditar={insumoAEditar}
-      />
+      {isOpen && (
+        <InsumoForm
+          isOpen={isOpen}
+          onOpenChange={setIsOpen}
+          insumoAEditar={insumoAEditar}
+        />
+      )}
     </>
   );
 }
