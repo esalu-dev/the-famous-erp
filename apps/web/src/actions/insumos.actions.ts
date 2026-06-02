@@ -25,29 +25,43 @@ export async function saveInsumoAction(
   const id = formData.get('id') as string | null;
   const nombre = formData.get('nombre') as string;
   const tipo = formData.get('tipo') as string;
-  const unidadMedida = formData.get('unidadMedida') as string;
+  const unidadMedidaRaw = formData.get('unidadMedida') as string;
   const cantidadActualRaw = formData.get('cantidadActual');
   const cantidadMinimaRaw = formData.get('cantidadMinima');
   const precioActualRaw = formData.get('precioActual');
   const imagenFileName = formData.get('foto') as string | null;
   const proveedorId = formData.get('proveedorId') as string | null;
 
-  if (!nombre || !tipo || !unidadMedida) {
+  if (!nombre || !tipo || !unidadMedidaRaw) {
     return {
       success: false,
       message: 'Todos los campos obligatorios deben ser completados.',
     };
   }
 
-  const cantidadActual = cantidadActualRaw ? Number(cantidadActualRaw) : 0;
-  const cantidadMinima = cantidadMinimaRaw ? Number(cantidadMinimaRaw) : 0;
-  const precioActual = precioActualRaw ? Number(precioActualRaw) : 0;
+  let unidadMedida = unidadMedidaRaw;
+  let cantidadActual = cantidadActualRaw ? Number(cantidadActualRaw) : 0;
+  let cantidadMinima = cantidadMinimaRaw ? Number(cantidadMinimaRaw) : 0;
+  let precioActual = precioActualRaw ? Number(precioActualRaw) : 0;
 
   if (isNaN(cantidadActual) || isNaN(cantidadMinima) || isNaN(precioActual)) {
     return {
       success: false,
       message: 'Los valores de cantidad y precio deben ser numéricos.',
     };
+  }
+
+  // Convert large units to smallest base units before saving to database
+  if (unidadMedidaRaw === 'Kilogramos') {
+    unidadMedida = 'Gramos';
+    cantidadActual = cantidadActual * 1000;
+    cantidadMinima = cantidadMinima * 1000;
+    precioActual = precioActual / 1000;
+  } else if (unidadMedidaRaw === 'Litros') {
+    unidadMedida = 'Mililitros';
+    cantidadActual = cantidadActual * 1000;
+    cantidadMinima = cantidadMinima * 1000;
+    precioActual = precioActual / 1000;
   }
 
   const payload = {
@@ -168,6 +182,7 @@ export async function resurtirInsumoAction(
   const cantidadRaw = formData.get('cantidad');
   const proveedorId = formData.get('proveedorId') as string;
   const precioUnitarioRaw = formData.get('precioUnitario');
+  const unidadMedida = formData.get('unidadMedida') as string;
 
   if (!cantidadRaw || !proveedorId) {
     return {
@@ -176,14 +191,22 @@ export async function resurtirInsumoAction(
     };
   }
 
-  const cantidad = Number(cantidadRaw);
-  const precioUnitario = precioUnitarioRaw ? Number(precioUnitarioRaw) : undefined;
+  let cantidad = Number(cantidadRaw);
+  let precioUnitario = precioUnitarioRaw ? Number(precioUnitarioRaw) : undefined;
 
   if (isNaN(cantidad) || (precioUnitario !== undefined && isNaN(precioUnitario))) {
     return {
       success: false,
       message: 'Los valores de cantidad y precio unitario deben ser numéricos.',
     };
+  }
+
+  // Convert large units to smallest base units before saving
+  if (unidadMedida === 'Kilogramos' || unidadMedida === 'Litros') {
+    cantidad = cantidad * 1000;
+    if (precioUnitario !== undefined) {
+      precioUnitario = precioUnitario / 1000;
+    }
   }
 
   try {

@@ -84,30 +84,78 @@ export const ResurtirModal = ({ insumo, isOpen, onOpenChange }: ResurtirModalPro
                     Estás reabasteciendo el insumo <strong className="text-foreground">{insumo.nombre}</strong>.
                   </div>
 
-                  {/* Cantidad */}
-                  <TextField
-                    className="w-full"
-                    name="cantidad"
-                    isRequired
-                    isDisabled={isSubmitting}
-                  >
-                    <Label className="text-xs font-bold uppercase tracking-widest flex justify-between items-center w-full">
-                      <span>Cantidad a ingresar</span>
-                      <span className="text-primary text-[10px] lowercase normal-case bg-primary-soft px-2 py-0.5 rounded-full font-semibold">
-                        Medido en: {insumo.unidadMedida}
-                      </span>
-                    </Label>
-                    <Input
-                      name="cantidad"
-                      placeholder="0"
-                      type="number"
-                      min={0.01}
-                      step="0.01"
-                      variant="secondary"
-                      className="h-11 px-3 text-sm"
-                      required
-                    />
-                  </TextField>
+                  {/* Cantidad y Unidad */}
+                  <div className="grid grid-cols-3 gap-3 items-end">
+                    <div className="col-span-2">
+                      <TextField
+                        className="w-full"
+                        name="cantidad"
+                        isRequired
+                        isDisabled={isSubmitting}
+                      >
+                        <Label className="text-xs font-bold uppercase tracking-widest">
+                          Cantidad a ingresar
+                        </Label>
+                        <Input
+                          name="cantidad"
+                          placeholder="0"
+                          type="number"
+                          min={0.01}
+                          step="0.01"
+                          variant="secondary"
+                          className="h-11 px-3 text-sm"
+                          required
+                        />
+                      </TextField>
+                    </div>
+                    <div>
+                      <Select
+                        className="w-full"
+                        name="unidadMedida"
+                        placeholder="Unidad"
+                        defaultSelectedKey={insumo.unidadMedida}
+                        isDisabled={isSubmitting}
+                        isRequired
+                      >
+                        <Select.Trigger className="h-11 px-2.5 text-xs bg-surface-secondary rounded-md flex justify-between items-center w-full text-left">
+                          <Select.Value />
+                          <Select.Indicator />
+                        </Select.Trigger>
+                        <Select.Popover>
+                          <ListBox>
+                            {insumo.unidadMedida === 'Gramos' ? (
+                              <>
+                                <ListBox.Item id="Kilogramos" textValue="kg">
+                                  Kilogramos (kg)
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                                <ListBox.Item id="Gramos" textValue="g">
+                                  Gramos (g)
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              </>
+                            ) : insumo.unidadMedida === 'Mililitros' ? (
+                              <>
+                                <ListBox.Item id="Litros" textValue="L">
+                                  Litros (L)
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                                <ListBox.Item id="Mililitros" textValue="ml">
+                                  Mililitros (ml)
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              </>
+                            ) : (
+                              <ListBox.Item id={insumo.unidadMedida || ''} textValue={insumo.unidadMedida}>
+                                {insumo.unidadMedida}
+                                <ListBox.ItemIndicator />
+                              </ListBox.Item>
+                            )}
+                          </ListBox>
+                        </Select.Popover>
+                      </Select>
+                    </div>
+                  </div>
 
                   {/* Precio Unitario */}
                   <TextField

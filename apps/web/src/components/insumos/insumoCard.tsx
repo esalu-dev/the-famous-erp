@@ -23,6 +23,33 @@ export function InsumoCard({
   onResurtir?: () => void;
 }) {
   const esBajoStock = stock !== undefined && cantidadMinima !== undefined && Number(stock) < Number(cantidadMinima);
+
+  // Formatear unidad y cantidades para mejor lectura del usuario
+  let unidadDisplay = unidad;
+  let stockDisplay = stock !== undefined ? Number(stock) : 0;
+  let minDisplay = cantidadMinima !== undefined ? Number(cantidadMinima) : 0;
+
+  if (unidad === 'Gramos') {
+    if (stockDisplay >= 1000) {
+      stockDisplay = stockDisplay / 1000;
+      minDisplay = minDisplay / 1000;
+      unidadDisplay = 'kg';
+    } else {
+      unidadDisplay = 'g';
+    }
+  } else if (unidad === 'Mililitros') {
+    if (stockDisplay >= 1000) {
+      stockDisplay = stockDisplay / 1000;
+      minDisplay = minDisplay / 1000;
+      unidadDisplay = 'L';
+    } else {
+      unidadDisplay = 'ml';
+    }
+  } else if (unidad === 'Miligramos') {
+    unidadDisplay = 'mg';
+  } else if (unidad === 'Piezas') {
+    unidadDisplay = 'pz';
+  }
   const categoryStyles = {
     A: {
       color: 'danger',
@@ -74,10 +101,10 @@ export function InsumoCard({
           <div className="gap-1">
             <span className="text-xs text-muted">Stock Actual</span>
             <div className={`text-sm font-semibold flex items-center gap-1.5 ${esBajoStock ? 'text-danger' : ''}`}>
-              <span>{stock}</span> <span>{unidad}</span>
+              <span>{stockDisplay}</span> <span>{unidadDisplay}</span>
               {esBajoStock && (
                 <span className="text-[10px] text-danger/80 font-normal">
-                  (Mínimo: {cantidadMinima})
+                  (Mínimo: {minDisplay} {unidadDisplay})
                 </span>
               )}
             </div>

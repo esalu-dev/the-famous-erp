@@ -156,13 +156,17 @@ enum InsumoTipo {
   Comida
   Bebida
   Cerveza
+  Empaque
+  Limpieza
+  Utensilios
+  Papeleria
 }
 
 enum UnidadMedida {
   Gramos
   Piezas
-  Litros
-  Costos
+  Mililitros
+  Miligramos
 }
 
 enum CategoriaABC {

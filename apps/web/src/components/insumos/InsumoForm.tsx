@@ -31,6 +31,26 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
 
+  let defaultUnidad = insumoAEditar?.unidadMedida || '';
+  let defaultCantidadActual = insumoAEditar?.cantidadActual ? Number(insumoAEditar.cantidadActual) : undefined;
+  let defaultCantidadMinima = insumoAEditar?.cantidadMinima ? Number(insumoAEditar.cantidadMinima) : undefined;
+  let defaultPrecioActual = insumoAEditar?.precioActual ? Number(insumoAEditar.precioActual) : undefined;
+
+  // Si está en Gramos y la cantidad es >= 1000, mostramos en Kilogramos para mejor UX
+  if (defaultUnidad === 'Gramos' && defaultCantidadActual !== undefined && defaultCantidadActual >= 1000) {
+    defaultUnidad = 'Kilogramos';
+    defaultCantidadActual = defaultCantidadActual / 1000;
+    if (defaultCantidadMinima !== undefined) defaultCantidadMinima = defaultCantidadMinima / 1000;
+    if (defaultPrecioActual !== undefined) defaultPrecioActual = defaultPrecioActual * 1000;
+  }
+  // Si está en Mililitros y la cantidad es >= 1000, mostramos en Litros
+  else if (defaultUnidad === 'Mililitros' && defaultCantidadActual !== undefined && defaultCantidadActual >= 1000) {
+    defaultUnidad = 'Litros';
+    defaultCantidadActual = defaultCantidadActual / 1000;
+    if (defaultCantidadMinima !== undefined) defaultCantidadMinima = defaultCantidadMinima / 1000;
+    if (defaultPrecioActual !== undefined) defaultPrecioActual = defaultPrecioActual * 1000;
+  }
+
   useEffect(() => {
     getProveedoresAction().then((res) => {
       if (res.success) {
@@ -187,6 +207,22 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                               Cerveza
                               <ListBox.ItemIndicator />
                             </ListBox.Item>
+                            <ListBox.Item id="Empaque" textValue="Empaque">
+                              Empaque
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Limpieza" textValue="Limpieza">
+                              Limpieza
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Utensilios" textValue="Utensilios">
+                              Utensilios
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Papeleria" textValue="Papelería">
+                              Papelería
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
                           </ListBox>
                         </Select.Popover>
                       </Select>
@@ -195,7 +231,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         className="w-full"
                         name="unidadMedida"
                         placeholder="Selecciona una unidad"
-                        defaultSelectedKey={insumoAEditar?.unidadMedida}
+                        defaultSelectedKey={defaultUnidad}
                         isDisabled={isSubmitting}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
@@ -207,11 +243,23 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         </Select.Trigger>
                         <Select.Popover>
                           <ListBox>
+                            <ListBox.Item id="Kilogramos" textValue="Kilogramos (kg)">
+                              Kilogramos (kg)
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
                             <ListBox.Item id="Gramos" textValue="Gramos (g)">
                               Gramos (g)
                               <ListBox.ItemIndicator />
                             </ListBox.Item>
-                            <ListBox.Item id="Litros" textValue="Mililitros (ml)">
+                            <ListBox.Item id="Miligramos" textValue="Miligramos (mg)">
+                              Miligramos (mg)
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Litros" textValue="Litros (L)">
+                              Litros (L)
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Mililitros" textValue="Mililitros (ml)">
                               Mililitros (ml)
                               <ListBox.ItemIndicator />
                             </ListBox.Item>
@@ -231,7 +279,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         name="cantidadActual"
                         isRequired
                         isDisabled={isSubmitting}
-                        defaultValue={insumoAEditar?.cantidadActual?.toString()}
+                        defaultValue={defaultCantidadActual?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Actual
@@ -251,7 +299,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         name="cantidadMinima"
                         isRequired
                         isDisabled={isSubmitting}
-                        defaultValue={insumoAEditar?.cantidadMinima?.toString()}
+                        defaultValue={defaultCantidadMinima?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Mínima (Alertas)
@@ -274,7 +322,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         name="precioActual"
                         isRequired
                         isDisabled={isSubmitting}
-                        defaultValue={insumoAEditar?.precioActual?.toString()}
+                        defaultValue={defaultPrecioActual?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Precio Actual
