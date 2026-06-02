@@ -15,3 +15,8 @@ jobs:
   build:
     name: 'Compilación'
     uses: ./.github/workflows/build.yml
+
+  docker:
+    name: 'Contenedores'
+    needs: build
+    uses: ./.github/workflows/docker-build.yml

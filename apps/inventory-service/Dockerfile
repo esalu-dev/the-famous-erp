@@ -1,14 +1,27 @@
-FROM node:24-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
+# Copiar archivos de configuración para resolver workspaces en el monorepo
 COPY package*.json ./
-RUN npm install
+COPY turbo.json ./
+COPY tsconfig.json ./
 
-COPY . .
+# Copiar el paquete compartido de base de datos
+COPY packages/database-client ./packages/database-client
 
-RUN npm run build
+# Copiar la aplicación específica
+COPY apps/inventory-service ./apps/inventory-service
+
+# Instalar dependencias a nivel monorepo
+RUN npm ci
+
+# Generar el cliente de Prisma
+RUN npm run db:generate
+
+# Compilar la aplicación y sus dependencias locales usando Turborepo
+RUN npx turbo run build --filter=@the-famous-erp/inventory-service...
 
 EXPOSE 3002
 
-CMD ["node", "dist/main"]
+CMD ["node", "apps/inventory-service/dist/main"]
