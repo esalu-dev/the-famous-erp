@@ -11,12 +11,27 @@ export class AppService {
     timeZone: 'America/Mexico_City',
   })
   async calcularClasificacionABC() {
+    const configRecord = await this.prisma.configuracion.findFirst();
+    const umbralA = configRecord ? Number(configRecord.umbralAbcA) : 80;
+    const umbralB = configRecord ? Number(configRecord.umbralAbcB) : 95;
+
+    const hace30Dias = new Date();
+    hace30Dias.setDate(hace30Dias.getDate() - 30);
+
     const insumos = await this.prisma.insumo.findMany({
       include: {
         recetas: {
           include: {
             producto: {
-              include: { ventas: true },
+              include: {
+                ventas: {
+                  where: {
+                    fecha: {
+                      gte: hace30Dias,
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -49,8 +64,10 @@ export class AppService {
       acumulado += porcentaje;
 
       let nuevaCategoria: 'A' | 'B' | 'C' = 'C';
-      if (acumulado <= 80) nuevaCategoria = 'A';
-      else if (acumulado <= 95) nuevaCategoria = 'B';
+      if (inversionTotal > 0) {
+        if (acumulado <= umbralA) nuevaCategoria = 'A';
+        else if (acumulado <= umbralB) nuevaCategoria = 'B';
+      }
 
       await this.prisma.insumo.update({
         where: { id: item.id },
