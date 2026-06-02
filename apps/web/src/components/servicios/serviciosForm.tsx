@@ -16,7 +16,7 @@ import {
   Checkbox,
   TextArea,
 } from '@heroui/react';
-import { saveServicioAction, type Servicio } from '@/actions/servicios.actions';
+import { saveServicioAction, deleteServicioAction, type Servicio } from '@/actions/servicios.actions';
 
 interface ServiciosFormProps {
   servicioAEditar?: Servicio | null;
@@ -28,21 +28,49 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
   const isEditMode = !!servicioAEditar;
 
   const [isActive, setIsActive] = useState(isEditMode ? !!servicioAEditar?.activo : true);
+  const [isAutorenovable, setIsAutorenovable] = useState(isEditMode ? !!servicioAEditar?.autorenovable : true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
     formData.set('activo', isActive.toString());
+    formData.set('autorenovable', isAutorenovable.toString());
 
-    toast.promise(saveServicioAction(formData), {
-      loading: isEditMode ? 'Actualizando servicio...' : 'Registrando servicio...',
-      success: (response) => {
+    setIsSubmitting(true);
+    try {
+      const response = await saveServicioAction(formData);
+      if (response.success) {
+        toast.success(response.message);
         onOpenChange(false);
-        return response.message;
-      },
-      error: (err) => err.message || 'Ocurrió un error inesperado',
-    });
+      } else {
+        toast.danger(response.message);
+      }
+    } catch (err: any) {
+      toast.danger(err.message || 'Ocurrió un error inesperado');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!servicioAEditar?.id) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await deleteServicioAction(servicioAEditar.id);
+      if (response.success) {
+        toast.success(response.message);
+        onOpenChange(false);
+      } else {
+        toast.danger(response.message);
+      }
+    } catch (err: any) {
+      toast.danger(err.message || 'Ocurrió un error inesperado');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -62,20 +90,34 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
             <Modal.Body className="p-6">
               <Surface variant="default">
                 <form id="servicio-form" onSubmit={handleSubmit} className="flex flex-col gap-6">
-                  <TextField className="w-full" name="nombre" isRequired>
+                  {isEditMode && (
+                    <input type="hidden" name="id" value={servicioAEditar?.id} />
+                  )}                  <TextField
+                    className="w-full"
+                    name="nombre"
+                    isRequired
+                    defaultValue={servicioAEditar?.nombre}
+                    isDisabled={isSubmitting}
+                  >
                     <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Nombre del Servicio
                     </Label>
                     <Input
+                      name="nombre"
                       placeholder="Ej. Internet, Licencia de Software, Agua..."
                       variant="secondary"
                       className="h-11 px-3 text-sm"
-                      defaultValue={servicioAEditar?.nombre}
                     />
                   </TextField>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <TextField className="w-full" name="costo" isRequired>
+                    <TextField
+                      className="w-full"
+                      name="costo"
+                      isRequired
+                      defaultValue={servicioAEditar?.costo?.toString()}
+                      isDisabled={isSubmitting}
+                    >
                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         Costo
                       </Label>
@@ -87,11 +129,11 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                           <CreditCard width={16} />
                         </InputGroup.Prefix>
                         <InputGroup.Input
+                          name="costo"
                           className="w-full text-sm pl-2"
                           type="number"
                           step="0.01"
                           placeholder="0.00"
-                          defaultValue={servicioAEditar?.costo?.toString()}
                         />
                       </InputGroup>
                     </TextField>
@@ -103,6 +145,7 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                       variant="secondary"
                       placeholder="Selecciona la periodicidad"
                       defaultSelectedKey={servicioAEditar?.periodicidad || undefined}
+                      isDisabled={isSubmitting}
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         Periodicidad
@@ -113,6 +156,12 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                       </Select.Trigger>
                       <Select.Popover>
                         <ListBox>
+                          <ListBox.Item id="Diario" textValue="Diario">
+                            Diario <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                          <ListBox.Item id="Cada3Dias" textValue="Cada 3 Días">
+                            Cada 3 Días <ListBox.ItemIndicator />
+                          </ListBox.Item>
                           <ListBox.Item id="Semanal" textValue="Semanal">
                             Semanal <ListBox.ItemIndicator />
                           </ListBox.Item>
@@ -131,21 +180,36 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <TextField className="w-full" name="notas">
+                    <TextField
+                      className="w-full"
+                      name="notas"
+                      defaultValue={servicioAEditar?.notas || ''}
+                      isDisabled={isSubmitting}
+                    >
                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         Notas Adicionales
                       </Label>
                       <TextArea
+                        name="notas"
                         aria-label="Notas Adicionales"
                         placeholder="Referencia, número de cuenta, etc."
                         rows={3}
                         variant="secondary"
                         className="w-full text-sm"
-                        defaultValue={servicioAEditar?.notas || ''}
                       />
                     </TextField>
 
-                    <TextField className="w-full" name="proximoPago" isRequired>
+                    <TextField
+                      className="w-full"
+                      name="proximoPago"
+                      isRequired
+                      defaultValue={
+                        servicioAEditar?.proximoPago
+                          ? new Date(servicioAEditar.proximoPago).toISOString().split('T')[0]
+                          : ''
+                      }
+                      isDisabled={isSubmitting}
+                    >
                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         Fecha de Próximo Pago
                       </Label>
@@ -154,6 +218,7 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                         variant="secondary"
                       >
                         <input
+                          name="proximoPago"
                           className="w-full text-sm pl-2 pr-3 bg-transparent border-none outline-none h-full invalid:[&::-webkit-datetime-edit]:text-default-400 [&::-webkit-calendar-picker-indicator]:opacity-50 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 transition-all"
                           type="date"
                           required
@@ -162,6 +227,7 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                               ? new Date(servicioAEditar.proximoPago).toISOString().split('T')[0]
                               : ''
                           }
+                          disabled={isSubmitting}
                         />
                       </InputGroup>
                     </TextField>
@@ -170,56 +236,105 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                   <hr className="border-border my-2" />
 
                   <h3 className="text-sm font-semibold text-accent flex items-center gap-2">
-                    <Shield width={16} /> Estado del Servicio
+                    <Shield width={16} /> Configuración del Servicio
                   </h3>
 
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        id="activo"
-                        name="activo"
-                        value="true"
-                        isSelected={isActive}
-                        onChange={setIsActive}
-                      >
-                        <Checkbox.Control>
-                          <Checkbox.Indicator />
-                        </Checkbox.Control>
-                        <Checkbox.Content>
-                          <Label
-                            htmlFor="activo"
-                            className="text-sm font-medium text-foreground cursor-pointer"
-                          >
-                            Servicio Activo
-                          </Label>
-                        </Checkbox.Content>
-                      </Checkbox>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          id="activo"
+                          name="activo"
+                          value="true"
+                          isSelected={isActive}
+                          onChange={setIsActive}
+                          isDisabled={isSubmitting}
+                        >
+                          <Checkbox.Control>
+                            <Checkbox.Indicator />
+                          </Checkbox.Control>
+                          <Checkbox.Content>
+                            <Label
+                              htmlFor="activo"
+                              className="text-sm font-medium text-foreground cursor-pointer"
+                            >
+                              Servicio Activo
+                            </Label>
+                          </Checkbox.Content>
+                        </Checkbox>
+                      </div>
+                      <p className="text-xs text-muted-foreground pl-7">
+                        Estado:{' '}
+                        <span
+                          className={
+                            isActive ? 'font-medium text-primary' : 'font-medium text-default-400'
+                          }
+                        >
+                          {isActive ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </p>
                     </div>
-                    <p className="text-sm text-muted-foreground pl-7">
-                      Estado:{' '}
-                      <span
-                        className={
-                          isActive ? 'font-medium text-primary' : 'font-medium text-default-400'
-                        }
-                      >
-                        {isActive ? 'Activo' : 'Inactivo'}
-                      </span>
-                    </p>
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          id="autorenovable"
+                          name="autorenovable"
+                          value="true"
+                          isSelected={isAutorenovable}
+                          onChange={setIsAutorenovable}
+                          isDisabled={isSubmitting}
+                        >
+                          <Checkbox.Control>
+                            <Checkbox.Indicator />
+                          </Checkbox.Control>
+                          <Checkbox.Content>
+                            <Label
+                              htmlFor="autorenovable"
+                              className="text-sm font-medium text-foreground cursor-pointer"
+                            >
+                              Autorenovable (Débito Automático)
+                            </Label>
+                          </Checkbox.Content>
+                        </Checkbox>
+                      </div>
+                      <p className="text-xs text-muted-foreground pl-7">
+                        Método:{' '}
+                        <span
+                          className={
+                            isAutorenovable ? 'font-medium text-primary' : 'font-medium text-warning'
+                          }
+                        >
+                          {isAutorenovable ? 'Automático (Sin acción)' : 'Manual (Requiere registro)'}
+                        </span>
+                      </p>
+                    </div>
                   </div>
                 </form>
               </Surface>
             </Modal.Body>
 
             <Modal.Footer>
+              {isEditMode && (
+                <Button
+                  variant="ghost"
+                  className="mr-auto text-danger hover:bg-danger/10 hover:text-danger border-danger/20"
+                  onPress={handleDelete}
+                  isDisabled={isSubmitting}
+                >
+                  Eliminar Servicio
+                </Button>
+              )}
               <Button
                 slot="close"
                 variant="ghost"
                 className="text-muted"
                 onPress={() => onOpenChange(false)}
+                isDisabled={isSubmitting}
               >
                 Cancelar
               </Button>
-              <Button type="submit" form="servicio-form" variant="primary">
+              <Button type="submit" form="servicio-form" variant="primary" isDisabled={isSubmitting}>
                 {isEditMode ? 'Guardar Cambios' : 'Registrar Servicio'}
               </Button>
             </Modal.Footer>

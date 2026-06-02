@@ -1,6 +1,10 @@
 import { ServiciosGrid } from '@/components/servicios/serviciosGrid';
+import { getServiciosAction } from '@/actions/servicios.actions';
 
-export default function ServiciosPage() {
+export default async function ServiciosPage() {
+  const response = await getServiciosAction();
+  const servicios = response.success ? response.data : [];
+
   return (
     <>
       <div>
@@ -10,7 +14,7 @@ export default function ServiciosPage() {
           valor
         </p>
       </div>
-      <ServiciosGrid />
+      <ServiciosGrid servicios={servicios} />
     </>
   );
 }

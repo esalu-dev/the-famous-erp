@@ -133,6 +133,7 @@ model Servicio {
   costo        Decimal      @db.Decimal(10, 2)
   periodicidad Periodicidad
   proximoPago  DateTime     @db.Date
+  autorenovable Boolean      @default(true)
   notas        String?
   activo       Boolean      @default(true)
 }
@@ -181,4 +182,5 @@ enum Periodicidad {
   Semanal
   Mensual
   Bimestral
+  Anual
 }
