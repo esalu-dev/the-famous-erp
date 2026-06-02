@@ -15,30 +15,62 @@ jobs:
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Construir Contenedor - auth-service
+      - name: Construir y exportar - auth-service
         uses: docker/build-push-action@v5
         with:
           context: .
           file: apps/auth-service/Dockerfile
-          push: false
+          tags: auth-service:latest
+          outputs: type=docker,dest=auth-service.tar
 
-      - name: Construir Contenedor - inventory-service
+      - name: Construir y exportar - inventory-service
         uses: docker/build-push-action@v5
         with:
           context: .
           file: apps/inventory-service/Dockerfile
-          push: false
+          tags: inventory-service:latest
+          outputs: type=docker,dest=inventory-service.tar
 
-      - name: Construir Contenedor - web
+      - name: Construir y exportar - web
         uses: docker/build-push-action@v5
         with:
           context: .
           file: apps/web/Dockerfile
-          push: false
+          tags: web:latest
+          outputs: type=docker,dest=web.tar
 
-      - name: Construir Contenedor - media-service
+      - name: Construir y exportar - media-service
         uses: docker/build-push-action@v5
         with:
           context: .
           file: apps/media-service/Dockerfile
-          push: false
+          tags: media-service:latest
+          outputs: type=docker,dest=media-service.tar
+
+      - name: Subir Artifact - auth-service
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth-service-image
+          path: auth-service.tar
+          retention-days: 1
+
+      - name: Subir Artifact - inventory-service
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory-service-image
+          path: inventory-service.tar
+          retention-days: 1
+
+      - name: Subir Artifact - web
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-image
+          path: web.tar
+          retention-days: 1
+
+      - name: Subir Artifact - media-service
+        uses: actions/upload-artifact@v4
+        with:
+          name: media-service-image
+          path: media-service.tar
+          retention-days: 1
