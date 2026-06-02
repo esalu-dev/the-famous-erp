@@ -37,8 +37,8 @@ export function ServiciosGrid({ servicios }: ServiciosGridProps) {
       } else {
         toast.danger(response.message);
       }
-    } catch (err: any) {
-      toast.danger(err.message || 'Error al registrar el pago');
+    } catch (err: unknown) {
+      toast.danger(err instanceof Error ? err.message : 'Error al registrar el pago');
     } finally {
       setRenewingId(null);
     }
@@ -131,11 +131,7 @@ export function ServiciosGrid({ servicios }: ServiciosGridProps) {
       </Button>
 
       {isOpen && (
-        <ServiciosForm
-          isOpen={isOpen}
-          onOpenChange={setIsOpen}
-          servicioAEditar={servicioAEditar}
-        />
+        <ServiciosForm isOpen={isOpen} onOpenChange={setIsOpen} servicioAEditar={servicioAEditar} />
       )}
     </>
   );

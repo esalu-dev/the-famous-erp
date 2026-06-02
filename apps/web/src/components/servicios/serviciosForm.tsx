@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Briefcase, CreditCard, Calendar, Pencil, Shield } from '@gravity-ui/icons';
+import { Briefcase, CreditCard, Shield } from '@gravity-ui/icons';
 import {
   Button,
   Input,
@@ -16,7 +16,11 @@ import {
   Checkbox,
   TextArea,
 } from '@heroui/react';
-import { saveServicioAction, deleteServicioAction, type Servicio } from '@/actions/servicios.actions';
+import {
+  saveServicioAction,
+  deleteServicioAction,
+  type Servicio,
+} from '@/actions/servicios.actions';
 
 interface ServiciosFormProps {
   servicioAEditar?: Servicio | null;
@@ -28,7 +32,9 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
   const isEditMode = !!servicioAEditar;
 
   const [isActive, setIsActive] = useState(isEditMode ? !!servicioAEditar?.activo : true);
-  const [isAutorenovable, setIsAutorenovable] = useState(isEditMode ? !!servicioAEditar?.autorenovable : true);
+  const [isAutorenovable, setIsAutorenovable] = useState(
+    isEditMode ? !!servicioAEditar?.autorenovable : true,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,8 +53,8 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
       } else {
         toast.danger(response.message);
       }
-    } catch (err: any) {
-      toast.danger(err.message || 'Ocurrió un error inesperado');
+    } catch (err: unknown) {
+      toast.danger(err instanceof Error ? err.message : 'Ocurrió un error inesperado');
     } finally {
       setIsSubmitting(false);
     }
@@ -66,8 +72,8 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
       } else {
         toast.danger(response.message);
       }
-    } catch (err: any) {
-      toast.danger(err.message || 'Ocurrió un error inesperado');
+    } catch (err: unknown) {
+      toast.danger(err instanceof Error ? err.message : 'Ocurrió un error inesperado');
     } finally {
       setIsSubmitting(false);
     }
@@ -90,9 +96,8 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
             <Modal.Body className="p-6">
               <Surface variant="default">
                 <form id="servicio-form" onSubmit={handleSubmit} className="flex flex-col gap-6">
-                  {isEditMode && (
-                    <input type="hidden" name="id" value={servicioAEditar?.id} />
-                  )}                  <TextField
+                  {isEditMode && <input type="hidden" name="id" value={servicioAEditar?.id} />}{' '}
+                  <TextField
                     className="w-full"
                     name="nombre"
                     isRequired
@@ -109,7 +114,6 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                       className="h-11 px-3 text-sm"
                     />
                   </TextField>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <TextField
                       className="w-full"
@@ -178,7 +182,6 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                       </Select.Popover>
                     </Select>
                   </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <TextField
                       className="w-full"
@@ -232,13 +235,10 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                       </InputGroup>
                     </TextField>
                   </div>
-
                   <hr className="border-border my-2" />
-
                   <h3 className="text-sm font-semibold text-accent flex items-center gap-2">
                     <Shield width={16} /> Configuración del Servicio
                   </h3>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-3">
@@ -302,10 +302,14 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
                         Método:{' '}
                         <span
                           className={
-                            isAutorenovable ? 'font-medium text-primary' : 'font-medium text-warning'
+                            isAutorenovable
+                              ? 'font-medium text-primary'
+                              : 'font-medium text-warning'
                           }
                         >
-                          {isAutorenovable ? 'Automático (Sin acción)' : 'Manual (Requiere registro)'}
+                          {isAutorenovable
+                            ? 'Automático (Sin acción)'
+                            : 'Manual (Requiere registro)'}
                         </span>
                       </p>
                     </div>
@@ -318,7 +322,7 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
               {isEditMode && (
                 <Button
                   variant="ghost"
-                  className="mr-auto text-danger hover:bg-danger/10 hover:text-danger border-danger/20"
+                  className="mr-auto text-danger hover:bg-danger/10 hover:text-danger border-danger-soft-hover"
                   onPress={handleDelete}
                   isDisabled={isSubmitting}
                 >
@@ -334,7 +338,12 @@ export const ServiciosForm = ({ servicioAEditar, isOpen, onOpenChange }: Servici
               >
                 Cancelar
               </Button>
-              <Button type="submit" form="servicio-form" variant="primary" isDisabled={isSubmitting}>
+              <Button
+                type="submit"
+                form="servicio-form"
+                variant="primary"
+                isDisabled={isSubmitting}
+              >
                 {isEditMode ? 'Guardar Cambios' : 'Registrar Servicio'}
               </Button>
             </Modal.Footer>

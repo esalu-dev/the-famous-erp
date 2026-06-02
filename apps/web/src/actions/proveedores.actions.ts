@@ -32,15 +32,17 @@ export async function saveProveedorAction(
     };
   }
 
-  const payload: any = { nombre };
+  const payload: Proveedor = { nombre };
 
-  if (formData.has('razonSocial')) payload.razonSocial = formData.get('razonSocial') as string || null;
-  if (formData.has('rfc')) payload.rfc = formData.get('rfc') as string || null;
-  if (formData.has('tipo')) payload.tipo = formData.get('tipo') as string || null;
-  if (formData.has('contactoNombre')) payload.contactoNombre = formData.get('contactoNombre') as string || null;
-  if (formData.has('telefono')) payload.telefono = formData.get('telefono') as string || null;
-  if (formData.has('correo')) payload.correo = formData.get('correo') as string || null;
-  if (formData.has('direccion')) payload.direccion = formData.get('direccion') as string || null;
+  if (formData.has('razonSocial'))
+    payload.razonSocial = (formData.get('razonSocial') as string) || null;
+  if (formData.has('rfc')) payload.rfc = (formData.get('rfc') as string) || null;
+  if (formData.has('tipo')) payload.tipo = (formData.get('tipo') as string) || null;
+  if (formData.has('contactoNombre'))
+    payload.contactoNombre = (formData.get('contactoNombre') as string) || null;
+  if (formData.has('telefono')) payload.telefono = (formData.get('telefono') as string) || null;
+  if (formData.has('correo')) payload.correo = (formData.get('correo') as string) || null;
+  if (formData.has('direccion')) payload.direccion = (formData.get('direccion') as string) || null;
   if (formData.has('estado')) payload.estado = formData.get('estado') as string;
 
   try {
@@ -67,7 +69,7 @@ export async function saveProveedorAction(
     }
 
     const data = await res.json();
-    
+
     revalidatePath('/app/proveedores');
 
     return {
@@ -128,7 +130,7 @@ export async function getProveedoresAction(): Promise<{ success: boolean; data: 
       headers: {
         'Content-Type': 'application/json',
       },
-      next: { revalidate: 0 }
+      next: { revalidate: 0 },
     });
 
     if (!res.ok) {

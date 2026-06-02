@@ -99,9 +99,13 @@ export async function saveServicioAction(
       message: `Servicio "${nombre}" ${id ? 'actualizado' : 'registrado'} exitosamente.`,
       data,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error saving servicio:', error);
-    throw new Error(error.message || `Error al ${id ? 'actualizar' : 'guardar'} el servicio`);
+    const message =
+      error instanceof Error
+        ? error.message
+        : `Error al ${id ? 'actualizar' : 'guardar'} el servicio`;
+    throw new Error(message);
   }
 }
 
@@ -164,7 +168,7 @@ export async function renewServicioPagoAction(
 
     // 2. Calcular la fecha del próximo pago sumando la periodicidad
     const currentDate = new Date(servicio.proximoPago);
-    let nextDate = new Date(currentDate);
+    const nextDate = new Date(currentDate);
 
     switch (servicio.periodicidad) {
       case 'Diario':
@@ -219,11 +223,13 @@ export async function renewServicioPagoAction(
       success: true,
       message: `Pago registrado correctamente. Próxima fecha: ${nextDate.toLocaleDateString()}`,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error renewing servicio pago:', error);
+    const message =
+      error instanceof Error ? error.message : 'Error al registrar el pago del servicio';
     return {
       success: false,
-      message: error.message || 'Error al registrar el pago del servicio',
+      message,
     };
   }
 }
