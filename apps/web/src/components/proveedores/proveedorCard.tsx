@@ -44,8 +44,8 @@ export function ProveedorCard({
           <div className="ml-auto">
             <Chip
               size="md"
-              color={estado ? categoryStyles[estado].color : categoryStyles.Activo.color}
-              variant={estado ? categoryStyles[estado].variant : categoryStyles.Activo.variant}
+              color={categoryStyles[estado].color}
+              variant={categoryStyles[estado].variant}
             >
               {estado}
             </Chip>
@@ -53,7 +53,7 @@ export function ProveedorCard({
         </div>
         <Card.Footer className="mt-auto flex w-full flex-col items-start gap-3 p-0">
           <div className="flex items-center gap-2">
-            <Boxes3 className="text-gray-600"/>
+            <Boxes3 className="text-gray-600" />
             <span className="text-sm text-gray-600">{tipoProveedor}</span>
           </div>
           <div className="flex items-center gap-2">

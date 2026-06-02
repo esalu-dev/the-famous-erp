@@ -17,7 +17,7 @@ export const AddEmpleadoButton = () => {
         className="fixed right-6 bottom-6 bg-primary text-primary-foreground shadow-xl z-50"
         onPress={() => setIsModalOpen(true)}
       >
-        <Plus width={20} height={20} />
+        <Plus className="size-6" />
       </Button>
 
       {/* modal */}
