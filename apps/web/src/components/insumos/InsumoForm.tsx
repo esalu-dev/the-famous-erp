@@ -9,13 +9,12 @@ import {
   Surface,
   TextField,
   InputGroup,
-  toast,
   Select,
   ListBox,
+  toast,
 } from '@heroui/react';
 import { saveInsumoAction, deleteInsumoAction, type Insumo } from '@/actions/insumos.actions';
-import { useRouter } from 'next/navigation';
-import { useTransition, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface InsumoFormProps {
   insumoAEditar?: Insumo | null; // Si se pasa, el form actúa en modo edición
@@ -25,10 +24,19 @@ interface InsumoFormProps {
 
 export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormProps) => {
   const isEditMode = !!insumoAEditar;
-  const router = useRouter();
-  const [, startTransition] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,6 +44,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    formData.set('foto', selectedFile?.name || '');
 
     setIsSubmitting(true);
 
@@ -44,8 +53,31 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
         if (!response.success) {
           throw new Error(response.message);
         }
-        onOpenChange(false);
-        return response;
+        if (response.uploadUrl && selectedFile) {
+          return fetch(response.uploadUrl, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': selectedFile.type,
+            },
+            body: selectedFile,
+          }).then((uploadRes) => {
+            if (!uploadRes.ok) {
+              toast.warning('Insumo guardado, pero hubo un error al subir la imagen');
+            } else {
+              toast.success('Insumo guardado e imagen subida exitosamente');
+            }
+            onOpenChange(false);
+            return response;
+          });
+        } else {
+          toast.success(response.message);
+          onOpenChange(false);
+          return response;
+        }
+      })
+      .catch((error) => {
+        console.error('Error submitting form:', error);
+        toast.danger(error instanceof Error ? error.message : 'Error al procesar la solicitud');
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -106,6 +138,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       name="nombre"
                       isRequired
                       isDisabled={isSubmitting}
+                      defaultValue={insumoAEditar?.nombre}
                     >
                       <Label className="text-xs font-bold uppercase tracking-widest">Nombre</Label>
                       <Input
@@ -113,7 +146,6 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         placeholder="Ej. Queso Mozzarella"
                         variant="secondary"
                         className="h-11 px-3 text-sm"
-                        defaultValue={insumoAEditar?.nombre}
                       />
                     </TextField>
 
@@ -189,6 +221,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         name="cantidadActual"
                         isRequired
                         isDisabled={isSubmitting}
+                        defaultValue={insumoAEditar?.cantidadActual?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Actual
@@ -200,7 +233,6 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                           min={0}
                           variant="secondary"
                           className="h-11 px-3 text-sm"
-                          defaultValue={insumoAEditar?.cantidadActual?.toString()}
                         />
                       </TextField>
 
@@ -209,6 +241,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         name="cantidadMinima"
                         isRequired
                         isDisabled={isSubmitting}
+                        defaultValue={insumoAEditar?.cantidadMinima?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Mínima (Alertas)
@@ -220,7 +253,6 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                           min={0}
                           variant="secondary"
                           className="h-11 px-3 text-sm"
-                          defaultValue={insumoAEditar?.cantidadMinima?.toString()}
                         />
                       </TextField>
                     </div>
@@ -232,6 +264,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         name="precioActual"
                         isRequired
                         isDisabled={isSubmitting}
+                        defaultValue={insumoAEditar?.precioActual?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Precio Actual
@@ -250,7 +283,6 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                             step="0.01"
                             min={0}
                             placeholder="0.00"
-                            defaultValue={insumoAEditar?.precioActual?.toString()}
                             required
                           />
                           <InputGroup.Suffix className="text-muted text-xs pr-3">
@@ -288,17 +320,56 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                     </div>
 
                     {/* Foto (Upload) */}
-                    <TextField className="w-full" name="foto" isDisabled={isSubmitting}>
-                      <Label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    <div className="w-full flex flex-col gap-2">
+                      <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-foreground">
                         <Camera className="text-muted size-4" /> Foto del Insumo
-                      </Label>
-                      <Input
+                      </label>
+                      
+                      {/* Image Preview */}
+                      {(selectedFile || insumoAEditar?.imagenUrl) && (
+                        <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-surface-secondary mb-2 group shadow-sm">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={selectedFile ? URL.createObjectURL(selectedFile) : (insumoAEditar?.imagenUrl || '')}
+                            alt="Vista previa de foto"
+                            className="w-full h-full object-cover"
+                          />
+                          {selectedFile && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedFile(null);
+                                if (fileInputRef.current) {
+                                  fileInputRef.current.value = '';
+                                }
+                              }}
+                              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                              title="Eliminar imagen seleccionada"
+                            >
+                              <span className="text-xs font-bold text-white bg-danger px-2 py-1 rounded-md transition-colors hover:bg-danger/90">
+                                Quitar
+                              </span>
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      <input
+                        ref={fileInputRef}
                         name="foto"
                         type="file"
                         accept="image/*"
+                        disabled={isSubmitting}
                         className="h-11 px-3 text-sm flex items-center pt-2 bg-surface-secondary rounded-md cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          console.log('Archivo seleccionado:', files);
+                          if (files && files.length > 0) {
+                            setSelectedFile(files[0]);
+                          }
+                        }}
                       />
-                    </TextField>
+                    </div>
                   </form>
                 </Surface>
               </Modal.Body>

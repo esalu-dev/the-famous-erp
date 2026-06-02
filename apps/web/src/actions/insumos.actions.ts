@@ -18,7 +18,7 @@ export interface Insumo {
 
 export async function saveInsumoAction(
   formData: FormData,
-): Promise<{ success: boolean; message: string; data?: unknown }> {
+): Promise<{ success: boolean; message: string; uploadUrl?: string }> {
   // Simular latencia de red para demostrar el spinner de carga
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -29,6 +29,7 @@ export async function saveInsumoAction(
   const cantidadActualRaw = formData.get('cantidadActual');
   const cantidadMinimaRaw = formData.get('cantidadMinima');
   const precioActualRaw = formData.get('precioActual');
+  const imagenFileName = formData.get('foto') as string | null;
 
   if (!nombre || !tipo || !unidadMedida) {
     return {
@@ -56,7 +57,10 @@ export async function saveInsumoAction(
     cantidadMinima,
     precioActual,
     categoria: 'C', // Default category required by database
+    imagenFileName, // Include the file name in the payload
   };
+
+  let fileUploadUrl: string;
 
   try {
     const url = id
@@ -80,6 +84,8 @@ export async function saveInsumoAction(
         message: errorData.message || `Error al ${id ? 'actualizar' : 'guardar'} el insumo`,
       };
     }
+    const responseData = await res.json();
+    fileUploadUrl = responseData.uploadUrl; // Obtener la URL de subida del insumo creado/actualizado
   } catch (error) {
     console.error('Error saving insumo:', error);
     return {
@@ -93,6 +99,7 @@ export async function saveInsumoAction(
   return {
     success: true,
     message: `Insumo "${nombre}" ${id ? 'actualizado' : 'guardado'} correctamente`,
+    uploadUrl: fileUploadUrl,
   };
 }
 

@@ -34,21 +34,18 @@ export function InsumoCard({
   } as const;
 
   return (
-    <Card className="w-full h-100 overflow-hidden">
-      <div className="relative w-full h-full overflow-hidden rounded-2xl">
+    <Card className="w-full h-120 overflow-hidden">
+      <div className="relative w-full h-56 overflow-hidden rounded-2xl">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           alt="Cherries"
           className="absolute inset-0 w-full h-full object-cover"
           loading="lazy"
-          src={
-            imagenUrl ||
-            'https://recetaselite.com/wp-content/uploads/2023/12/20260316_2106_Image-Generation_simple_compose_01kkw426e2fbg8zd871vtwv3qe.png'
-          }
+          src={imagenUrl || 'https://blocks.astratic.com/img/general-img-landscape.png'}
         />
       </div>
-      <div className="flex flex-1 flex-col gap-3">
-        <Card.Header className="gap-3">
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <Card.Header className="gap-3 p-0">
           <div className="flex items-center justify-between w-full">
             <Card.Title className="pr-8 font-bold text-base">{titulo}</Card.Title>
             <span className="font-bold">${precio}</span>
@@ -62,7 +59,7 @@ export function InsumoCard({
             Categoría {categoria}
           </Chip>
         </Card.Header>
-        <Card.Footer className="mt-auto flex w-full flex-col items-start gap-3">
+        <Card.Footer className="mt-auto flex w-full flex-col items-start gap-3 p-0">
           <div className="gap-1">
             <span className="text-xs text-muted">Stock Actual</span>
             <div className="justify-between text-sm font-semibold">

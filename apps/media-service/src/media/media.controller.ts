@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Param } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Delete, Body } from '@nestjs/common';
 import { MediaService } from './media.service';
 
 @Controller('media')
@@ -11,5 +11,13 @@ export class MediaController {
       throw new BadRequestException('El nombre del archivo es requerido');
     }
     return await this.mediaService.generateUploadUrl(fileName);
+  }
+
+  @Delete('file')
+  async deleteFile(@Body('fileUrl') fileUrl: string) {
+    if (!fileUrl) {
+      throw new BadRequestException('La URL del archivo es requerida');
+    }
+    return await this.mediaService.deleteFileByUrl(fileUrl);
   }
 }
