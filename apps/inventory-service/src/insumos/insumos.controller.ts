@@ -27,6 +27,14 @@ export class InsumosController {
     return this.insumosService.update(id, dto);
   }
 
+  @Post(':id/resurtir')
+  resurtir(
+    @Param('id') id: string,
+    @Body() dto: { cantidad: number; proveedorId: string; precioUnitario?: number },
+  ) {
+    return this.insumosService.resurtir(id, dto);
+  }
+
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.insumosService.delete(id);

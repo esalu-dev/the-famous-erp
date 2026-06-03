@@ -29,6 +29,9 @@ export async function getSession(): Promise<UserSession | null> {
       nombre: payload.nombre as string,
     };
   } catch (error) {
+    if (error instanceof Error && (error as any).digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error('Error al verificar el token de sesión:', error);
     return null;
   }

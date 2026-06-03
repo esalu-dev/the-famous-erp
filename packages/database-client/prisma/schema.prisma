@@ -133,6 +133,7 @@ model Servicio {
   costo        Decimal      @db.Decimal(10, 2)
   periodicidad Periodicidad
   proximoPago  DateTime     @db.Date
+  autorenovable Boolean      @default(true)
   notas        String?
   activo       Boolean      @default(true)
 }
@@ -155,13 +156,17 @@ enum InsumoTipo {
   Comida
   Bebida
   Cerveza
+  Empaque
+  Limpieza
+  Utensilios
+  Papeleria
 }
 
 enum UnidadMedida {
   Gramos
   Piezas
-  Litros
-  Costos
+  Mililitros
+  Miligramos
 }
 
 enum CategoriaABC {
@@ -181,4 +186,5 @@ enum Periodicidad {
   Semanal
   Mensual
   Bimestral
+  Anual
 }

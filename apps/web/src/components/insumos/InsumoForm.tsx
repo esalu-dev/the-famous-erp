@@ -14,6 +14,7 @@ import {
   toast,
 } from '@heroui/react';
 import { saveInsumoAction, deleteInsumoAction, type Insumo } from '@/actions/insumos.actions';
+import { getProveedoresAction, type Proveedor } from '@/actions/proveedores.actions';
 import { useState, useEffect, useRef } from 'react';
 
 interface InsumoFormProps {
@@ -28,6 +29,49 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+
+  let defaultUnidad = insumoAEditar?.unidadMedida || '';
+  let defaultCantidadActual = insumoAEditar?.cantidadActual
+    ? Number(insumoAEditar.cantidadActual)
+    : undefined;
+  let defaultCantidadMinima = insumoAEditar?.cantidadMinima
+    ? Number(insumoAEditar.cantidadMinima)
+    : undefined;
+  let defaultPrecioActual = insumoAEditar?.precioActual
+    ? Number(insumoAEditar.precioActual)
+    : undefined;
+
+  // Si está en Gramos y la cantidad es >= 1000, mostramos en Kilogramos para mejor UX
+  if (
+    defaultUnidad === 'Gramos' &&
+    defaultCantidadActual !== undefined &&
+    defaultCantidadActual >= 1000
+  ) {
+    defaultUnidad = 'Kilogramos';
+    defaultCantidadActual = defaultCantidadActual / 1000;
+    if (defaultCantidadMinima !== undefined) defaultCantidadMinima = defaultCantidadMinima / 1000;
+    if (defaultPrecioActual !== undefined) defaultPrecioActual = defaultPrecioActual * 1000;
+  }
+  // Si está en Mililitros y la cantidad es >= 1000, mostramos en Litros
+  else if (
+    defaultUnidad === 'Mililitros' &&
+    defaultCantidadActual !== undefined &&
+    defaultCantidadActual >= 1000
+  ) {
+    defaultUnidad = 'Litros';
+    defaultCantidadActual = defaultCantidadActual / 1000;
+    if (defaultCantidadMinima !== undefined) defaultCantidadMinima = defaultCantidadMinima / 1000;
+    if (defaultPrecioActual !== undefined) defaultPrecioActual = defaultPrecioActual * 1000;
+  }
+
+  useEffect(() => {
+    getProveedoresAction().then((res) => {
+      if (res.success) {
+        setProveedores(res.data);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (!isOpen) {
@@ -177,6 +221,22 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                               Cerveza
                               <ListBox.ItemIndicator />
                             </ListBox.Item>
+                            <ListBox.Item id="Empaque" textValue="Empaque">
+                              Empaque
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Limpieza" textValue="Limpieza">
+                              Limpieza
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Utensilios" textValue="Utensilios">
+                              Utensilios
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Papeleria" textValue="Papelería">
+                              Papelería
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
                           </ListBox>
                         </Select.Popover>
                       </Select>
@@ -185,7 +245,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         className="w-full"
                         name="unidadMedida"
                         placeholder="Selecciona una unidad"
-                        defaultSelectedKey={insumoAEditar?.unidadMedida}
+                        defaultSelectedKey={defaultUnidad}
                         isDisabled={isSubmitting}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
@@ -197,11 +257,23 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         </Select.Trigger>
                         <Select.Popover>
                           <ListBox>
+                            <ListBox.Item id="Kilogramos" textValue="Kilogramos (kg)">
+                              Kilogramos (kg)
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
                             <ListBox.Item id="Gramos" textValue="Gramos (g)">
                               Gramos (g)
                               <ListBox.ItemIndicator />
                             </ListBox.Item>
-                            <ListBox.Item id="Litros" textValue="Mililitros (ml)">
+                            <ListBox.Item id="Miligramos" textValue="Miligramos (mg)">
+                              Miligramos (mg)
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Litros" textValue="Litros (L)">
+                              Litros (L)
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                            <ListBox.Item id="Mililitros" textValue="Mililitros (ml)">
                               Mililitros (ml)
                               <ListBox.ItemIndicator />
                             </ListBox.Item>
@@ -221,7 +293,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         name="cantidadActual"
                         isRequired
                         isDisabled={isSubmitting}
-                        defaultValue={insumoAEditar?.cantidadActual?.toString()}
+                        defaultValue={defaultCantidadActual?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Actual
@@ -241,7 +313,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         name="cantidadMinima"
                         isRequired
                         isDisabled={isSubmitting}
-                        defaultValue={insumoAEditar?.cantidadMinima?.toString()}
+                        defaultValue={defaultCantidadMinima?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
                           Cantidad Mínima (Alertas)
@@ -264,10 +336,10 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         name="precioActual"
                         isRequired
                         isDisabled={isSubmitting}
-                        defaultValue={insumoAEditar?.precioActual?.toString()}
+                        defaultValue={defaultPrecioActual?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
-                          Precio Actual
+                          Precio Unitario
                         </Label>
                         <InputGroup
                           className="h-11 flex items-center overflow-hidden w-full"
@@ -293,8 +365,9 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
 
                       <Select
                         className="w-full"
-                        name="proveedor"
+                        name="proveedorId"
                         placeholder="Selecciona un proveedor"
+                        defaultSelectedKey={insumoAEditar?.proveedorId}
                         isDisabled={isSubmitting}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
@@ -306,14 +379,12 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         </Select.Trigger>
                         <Select.Popover>
                           <ListBox>
-                            <ListBox.Item id="lacteos_express" textValue="Lácteos Express">
-                              Lácteos Express
-                              <ListBox.ItemIndicator />
-                            </ListBox.Item>
-                            <ListBox.Item id="distribuidora_norte" textValue="Distribuidora Norte">
-                              Distribuidora Norte
-                              <ListBox.ItemIndicator />
-                            </ListBox.Item>
+                            {proveedores.map((p) => (
+                              <ListBox.Item key={p.id} id={p.id} textValue={p.nombre}>
+                                {p.nombre}
+                                <ListBox.ItemIndicator />
+                              </ListBox.Item>
+                            ))}
                           </ListBox>
                         </Select.Popover>
                       </Select>
@@ -324,13 +395,17 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-foreground">
                         <Camera className="text-muted size-4" /> Foto del Insumo
                       </label>
-                      
+
                       {/* Image Preview */}
                       {(selectedFile || insumoAEditar?.imagenUrl) && (
                         <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-surface-secondary mb-2 group shadow-sm">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={selectedFile ? URL.createObjectURL(selectedFile) : (insumoAEditar?.imagenUrl || '')}
+                            src={
+                              selectedFile
+                                ? URL.createObjectURL(selectedFile)
+                                : insumoAEditar?.imagenUrl || ''
+                            }
                             alt="Vista previa de foto"
                             className="w-full h-full object-cover"
                           />

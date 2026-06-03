@@ -1,4 +1,4 @@
-import { Controller, Post, Req, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Req, Body, UseGuards, Get, Patch, Delete, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import type { RegisterDto } from './auth-dto';
@@ -17,5 +17,25 @@ export class AuthController {
   @Post('/login')
   login(@Req() req: { user: Usuario }) {
     return this.authService.login(req.user);
+  }
+
+  @Get('/usuarios')
+  async getUsuarios() {
+    return this.authService.findAll();
+  }
+
+  @Post('/usuarios')
+  async createUsuario(@Body() body: any) {
+    return this.authService.createUsuario(body);
+  }
+
+  @Patch('/usuarios/:id')
+  async updateUsuario(@Param('id') id: string, @Body() body: any) {
+    return this.authService.updateUsuario(id, body);
+  }
+
+  @Delete('/usuarios/:id')
+  async deleteUsuario(@Param('id') id: string) {
+    return this.authService.deleteUsuario(id);
   }
 }

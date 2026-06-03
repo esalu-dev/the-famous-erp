@@ -5,6 +5,7 @@ import { Plus } from '@gravity-ui/icons';
 import { Button } from '@heroui/react';
 import { InsumoCard } from './insumoCard';
 import { InsumoForm } from './InsumoForm';
+import { ResurtirModal } from './ResurtirModal';
 import { type Insumo } from '@/actions/insumos.actions';
 
 interface InsumosGridProps {
@@ -13,11 +14,18 @@ interface InsumosGridProps {
 
 export function InsumosGrid({ insumos }: InsumosGridProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isResurtirOpen, setIsResurtirOpen] = useState(false);
   const [insumoAEditar, setInsumoAEditar] = useState<Insumo | null>(null);
+  const [insumoAResurtir, setInsumoAResurtir] = useState<Insumo | null>(null);
 
   const handleEdit = (insumo: Insumo) => {
     setInsumoAEditar(insumo);
     setIsOpen(true);
+  };
+
+  const handleResurtir = (insumo: Insumo) => {
+    setInsumoAResurtir(insumo);
+    setIsResurtirOpen(true);
   };
 
   const handleAdd = () => {
@@ -37,7 +45,9 @@ export function InsumosGrid({ insumos }: InsumosGridProps) {
             stock={insumo.cantidadActual}
             unidad={insumo.unidadMedida}
             imagenUrl={insumo.imagenUrl}
+            cantidadMinima={insumo.cantidadMinima}
             onEdit={() => handleEdit(insumo)}
+            onResurtir={() => handleResurtir(insumo)}
           />
         ))}
       </div>
@@ -56,6 +66,14 @@ export function InsumosGrid({ insumos }: InsumosGridProps) {
           isOpen={isOpen}
           onOpenChange={setIsOpen}
           insumoAEditar={insumoAEditar}
+        />
+      )}
+
+      {isResurtirOpen && insumoAResurtir && (
+        <ResurtirModal
+          insumo={insumoAResurtir}
+          isOpen={isResurtirOpen}
+          onOpenChange={setIsResurtirOpen}
         />
       )}
     </>

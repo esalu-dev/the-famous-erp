@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { SidebarButton } from '@/components/dashboard/sidebarButton';
 import { TopBar } from '@/components/dashboard/TopBar';
 import {

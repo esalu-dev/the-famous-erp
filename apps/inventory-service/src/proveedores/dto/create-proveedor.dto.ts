@@ -31,4 +31,8 @@ export class CreateProveedorDto {
   @IsString()
   @IsOptional()
   direccion?: string;
+
+  @IsString()
+  @IsOptional()
+  estado?: 'Activo' | 'Inactivo';
 }
