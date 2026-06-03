@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import * as jose from 'jose';
 
-export function proxy(request: NextRequest) {
+const JWT_SECRET = process.env.JWT_SECRET || 'erp_secret_key';
+
+export async function proxy(request: NextRequest) {
   const token = request.cookies.get('session_token')?.value;
   const { pathname } = request.nextUrl;
 
@@ -13,13 +16,29 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Si no hay token y no es la página de login, redirigir a login
-  if (!token && !isLoginPage) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  let isValid = false;
+
+  if (token) {
+    try {
+      const secretKey = new TextEncoder().encode(JWT_SECRET);
+      await jose.jwtVerify(token, secretKey);
+      isValid = true;
+    } catch (error) {
+      console.warn('Token de sesión inválido o vencido en proxy (middleware):', error);
+    }
   }
 
-  // Si hay token e intenta ir al login, redirigir a la aplicación principal (/app)
-  if (token && isLoginPage) {
+  // Si no hay token o es inválido/vencido, y no estamos en login, redirigir a login y borrar la cookie
+  if (!isValid && !isLoginPage) {
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    if (token) {
+      response.cookies.delete('session_token');
+    }
+    return response;
+  }
+
+  // Si hay token válido e intenta ir al login, redirigir a la aplicación principal (/app)
+  if (isValid && isLoginPage) {
     return NextResponse.redirect(new URL('/app', request.url));
   }
 
