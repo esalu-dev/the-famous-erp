@@ -32,19 +32,33 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
 
   let defaultUnidad = insumoAEditar?.unidadMedida || '';
-  let defaultCantidadActual = insumoAEditar?.cantidadActual ? Number(insumoAEditar.cantidadActual) : undefined;
-  let defaultCantidadMinima = insumoAEditar?.cantidadMinima ? Number(insumoAEditar.cantidadMinima) : undefined;
-  let defaultPrecioActual = insumoAEditar?.precioActual ? Number(insumoAEditar.precioActual) : undefined;
+  let defaultCantidadActual = insumoAEditar?.cantidadActual
+    ? Number(insumoAEditar.cantidadActual)
+    : undefined;
+  let defaultCantidadMinima = insumoAEditar?.cantidadMinima
+    ? Number(insumoAEditar.cantidadMinima)
+    : undefined;
+  let defaultPrecioActual = insumoAEditar?.precioActual
+    ? Number(insumoAEditar.precioActual)
+    : undefined;
 
   // Si está en Gramos y la cantidad es >= 1000, mostramos en Kilogramos para mejor UX
-  if (defaultUnidad === 'Gramos' && defaultCantidadActual !== undefined && defaultCantidadActual >= 1000) {
+  if (
+    defaultUnidad === 'Gramos' &&
+    defaultCantidadActual !== undefined &&
+    defaultCantidadActual >= 1000
+  ) {
     defaultUnidad = 'Kilogramos';
     defaultCantidadActual = defaultCantidadActual / 1000;
     if (defaultCantidadMinima !== undefined) defaultCantidadMinima = defaultCantidadMinima / 1000;
     if (defaultPrecioActual !== undefined) defaultPrecioActual = defaultPrecioActual * 1000;
   }
   // Si está en Mililitros y la cantidad es >= 1000, mostramos en Litros
-  else if (defaultUnidad === 'Mililitros' && defaultCantidadActual !== undefined && defaultCantidadActual >= 1000) {
+  else if (
+    defaultUnidad === 'Mililitros' &&
+    defaultCantidadActual !== undefined &&
+    defaultCantidadActual >= 1000
+  ) {
     defaultUnidad = 'Litros';
     defaultCantidadActual = defaultCantidadActual / 1000;
     if (defaultCantidadMinima !== undefined) defaultCantidadMinima = defaultCantidadMinima / 1000;
@@ -325,7 +339,7 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                         defaultValue={defaultPrecioActual?.toString()}
                       >
                         <Label className="text-xs font-bold uppercase tracking-widest">
-                          Precio Actual
+                          Precio Unitario
                         </Label>
                         <InputGroup
                           className="h-11 flex items-center overflow-hidden w-full"
@@ -381,13 +395,17 @@ export const InsumoForm = ({ insumoAEditar, isOpen, onOpenChange }: InsumoFormPr
                       <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-foreground">
                         <Camera className="text-muted size-4" /> Foto del Insumo
                       </label>
-                      
+
                       {/* Image Preview */}
                       {(selectedFile || insumoAEditar?.imagenUrl) && (
                         <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-surface-secondary mb-2 group shadow-sm">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={selectedFile ? URL.createObjectURL(selectedFile) : (insumoAEditar?.imagenUrl || '')}
+                            src={
+                              selectedFile
+                                ? URL.createObjectURL(selectedFile)
+                                : insumoAEditar?.imagenUrl || ''
+                            }
                             alt="Vista previa de foto"
                             className="w-full h-full object-cover"
                           />

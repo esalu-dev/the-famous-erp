@@ -50,6 +50,18 @@ export function InsumoCard({
   } else if (unidad === 'Piezas') {
     unidadDisplay = 'pz';
   }
+
+  let precioUnidadLabel = '';
+  if (unidad === 'Gramos') {
+    precioUnidadLabel = '/ g';
+  } else if (unidad === 'Mililitros') {
+    precioUnidadLabel = '/ ml';
+  } else if (unidad === 'Miligramos') {
+    precioUnidadLabel = '/ mg';
+  } else if (unidad === 'Piezas') {
+    precioUnidadLabel = '/ pz';
+  }
+
   const categoryStyles = {
     A: {
       color: 'danger',
@@ -86,7 +98,12 @@ export function InsumoCard({
         <Card.Header className="gap-3 p-0">
           <div className="flex items-center justify-between w-full">
             <Card.Title className="pr-8 font-bold text-base">{titulo}</Card.Title>
-            <span className="font-bold">${precio}</span>
+            <span className="font-bold flex items-baseline gap-0.5">
+              ${precio}
+              {precioUnidadLabel && (
+                <span className="text-xs text-muted font-normal">{precioUnidadLabel}</span>
+              )}
+            </span>
           </div>
           <Chip
             size="md"
