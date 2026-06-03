@@ -8,7 +8,6 @@ import {
   Modal,
   Surface,
   TextField,
-  toast,
   Select,
   ListBox,
   InputGroup,
@@ -27,21 +26,30 @@ export const EmpleadoForm = ({ empleadoAEditar, isOpen, onOpenChange }: Empleado
   const isEditMode = !!empleadoAEditar;
 
   const [isActive, setIsActive] = useState(isEditMode ? !!empleadoAEditar?.activo : true);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
     formData.set('activo', isActive.toString());
 
-    toast.promise(saveEmpleadoAction(formData), {
-      loading: isEditMode ? 'Actualizando empleado...' : 'Registrando empleado...',
-      success: (response) => {
+    setIsPending(true);
+    setError(null);
+
+    try {
+      const response = await saveEmpleadoAction(formData);
+      if (response.success) {
         onOpenChange(false); // se cierra el modal al completar la acción
-        return response.message;
-      },
-      error: (err) => err.message || 'Ocurrió un error inesperado',
-    });
+      } else {
+        setError(response.message);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Ocurrió un error inesperado');
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -62,24 +70,42 @@ export const EmpleadoForm = ({ empleadoAEditar, isOpen, onOpenChange }: Empleado
             <Modal.Body className="p-6">
               <Surface variant="default">
                 <form id="empleado-form" onSubmit={handleSubmit} className="flex flex-col gap-6">
+                  {error && (
+                    <div className="bg-danger-soft text-danger text-xs p-3 rounded-md border border-danger/10">
+                      {error}
+                    </div>
+                  )}
+                  {isEditMode && empleadoAEditar?.id && (
+                    <input type="hidden" name="id" value={empleadoAEditar.id} />
+                  )}
                   {/* Fila 1: Nombre */}
                   <div className="grid grid-cols-1 gap-4">
-                    <TextField className="w-full" name="nombre" isRequired>
+                    <TextField
+                      className="w-full"
+                      name="nombre"
+                      isRequired
+                      defaultValue={empleadoAEditar?.nombre}
+                    >
                       <Label className="text-xs font-bold uppercase tracking-widest">
-                        Nombre Completo
+                        Nombre de usuario
                       </Label>
                       <Input
+                        name="nombre"
                         placeholder="Ej. Axell Romo"
                         variant="secondary"
                         className="h-11 px-3 text-sm"
-                        defaultValue={empleadoAEditar?.nombre}
                       />
                     </TextField>
                   </div>
 
                   {/* Fila 2: Correo y Contraseña */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <TextField className="w-full" name="correo" isRequired>
+                    <TextField
+                      className="w-full"
+                      name="correo"
+                      isRequired
+                      defaultValue={empleadoAEditar?.correo || ''}
+                    >
                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                         Correo Electrónico
                       </Label>
@@ -91,10 +117,10 @@ export const EmpleadoForm = ({ empleadoAEditar, isOpen, onOpenChange }: Empleado
                           <Envelope width={16} />
                         </InputGroup.Prefix>
                         <InputGroup.Input
+                          name="correo"
                           className="w-full text-sm pl-2"
                           type="email"
                           placeholder="axell@thefamous.com"
-                          defaultValue={empleadoAEditar?.correo || ''}
                         />
                       </InputGroup>
                     </TextField>
@@ -111,6 +137,7 @@ export const EmpleadoForm = ({ empleadoAEditar, isOpen, onOpenChange }: Empleado
                           <Lock width={16} />
                         </InputGroup.Prefix>
                         <InputGroup.Input
+                          name="password"
                           className="w-full text-sm pl-2"
                           type="password"
                           placeholder={isEditMode ? 'Dejar en blanco para no cambiar' : '******'}
@@ -200,10 +227,17 @@ export const EmpleadoForm = ({ empleadoAEditar, isOpen, onOpenChange }: Empleado
                 variant="ghost"
                 className="text-muted"
                 onPress={() => onOpenChange(false)}
+                isDisabled={isPending}
               >
                 Cancelar
               </Button>
-              <Button type="submit" form="empleado-form" variant="primary">
+              <Button
+                type="submit"
+                form="empleado-form"
+                variant="primary"
+                isPending={isPending}
+                isDisabled={isPending}
+              >
                 {isEditMode ? 'Guardar Cambios' : 'Registrar Empleado'}
               </Button>
             </Modal.Footer>
