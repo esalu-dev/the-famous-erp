@@ -1,6 +1,6 @@
-import { Button, Card, Chip } from "@heroui/react";
-import {Rectangles4, Pencil} from '@gravity-ui/icons';
-import {Calendar} from '@gravity-ui/icons';
+import { Button, Card, Chip } from '@heroui/react';
+import { Rectangles4, Pencil } from '@gravity-ui/icons';
+import { Calendar } from '@gravity-ui/icons';
 
 export function ServiciosCard({
     servicio,
