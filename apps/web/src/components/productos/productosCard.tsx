@@ -6,14 +6,21 @@ export function ProductosCard({
   precio,
   imagenUrl,
   margenGanancia,
+  categoria,
 }: {
   titulo: string;
   precio: number;
   imagenUrl: string | null;
   margenGanancia: string;
+  categoria: string;
 }) {
   return (
     <Card className="w-full h-80 overflow-hidden transition-all duration-200">
+      <div className="absolute top-6 left-6 z-10">
+        <Chip size="md" className="rounded-full w-fit font-semibold" color="accent">
+          {categoria}
+        </Chip>
+      </div>
       <div className="relative w-full h-56 overflow-hidden rounded-2xl">
         <img
           alt="Pizza"
@@ -32,6 +39,12 @@ export function ProductosCard({
             </Chip>
           </div>
         </Card.Header>
+        <div className="mt-4">
+          <Button className="w-full">
+            <Pencil />
+            Actualizar
+          </Button>
+        </div>
       </div>
     </Card>
   );

@@ -205,7 +205,7 @@ export const EmpleadoForm = ({ empleadoAEditar, isOpen, onOpenChange }: Empleado
                           </Checkbox.Content>
                         </Checkbox>
                       </div>
-                      <p className="text-sm text-muted-foreground pl-7">
+                      <p className="text-xs text-muted-foreground pl-7">
                         Estado:{' '}
                         <span
                           className={
