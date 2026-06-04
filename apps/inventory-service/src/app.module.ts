@@ -6,9 +6,16 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ProveedoresModule } from './proveedores/proveedores.module';
 import { InsumosModule } from './insumos/insumos.module';
 import { ServiciosModule } from './servicios/servicios.module';
+import { ProductosModule } from './productos/productos.module';
 
 @Module({
-  imports: [InsumosModule, ProveedoresModule, ScheduleModule.forRoot(), ServiciosModule],
+  imports: [
+    InsumosModule,
+    ProveedoresModule,
+    ScheduleModule.forRoot(),
+    ServiciosModule,
+    ProductosModule,
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
