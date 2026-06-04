@@ -98,6 +98,47 @@ export class ProductosService {
     } catch (error) {
       throw new BadRequestException('Error al obtener los productos: ' + error);
     }
-    
+  }
+
+  async update(
+    id: string,
+    data: Prisma.ProductoUpdateInput & { receta?: { insumoId: string; cantidad: number }[] },
+  ) {
+    try {
+      const { receta, ...datosProducto } = data;
+
+      const updateData: any = {
+        ...datosProducto,
+      };
+
+      if (receta && Array.isArray(receta)) {
+        const esBebida = datosProducto.categoria === 'Bebida';
+
+        const recetaFinal = receta.map((item) => ({
+          insumoId: item.insumoId,
+          cantidad: esBebida ? 1.0 : item.cantidad,
+        }));
+
+        updateData.receta = {
+          deleteMany: {},
+          createMany: {
+            data: recetaFinal,
+          },
+        };
+      }
+
+      return await this.prismaService.producto.update({
+        where: { id },
+        data: updateData,
+        include: {
+          receta: true,
+        },
+      });
+    } catch (error) {
+      if (error === 'P2025') {
+        throw new BadRequestException(`No se encontró el producto con ID: ${id}`);
+      }
+      throw new BadRequestException('Error al actualizar el producto: ' + error);
+    }
   }
 }

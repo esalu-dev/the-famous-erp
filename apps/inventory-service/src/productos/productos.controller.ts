@@ -1,4 +1,4 @@
-import { Controller, Body, Post, Get, Query} from '@nestjs/common';
+import { Controller, Body, Post, Get, Query, Patch, Param} from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { Prisma } from '@the-famous-erp/database-client';
 
@@ -15,7 +15,7 @@ export class ProductosController {
   ) {
     return this.productosService.create(data);
   }
-  
+
   @Get()
   async findAll(
     @Query('categoria') categoria?: string,
@@ -23,5 +23,16 @@ export class ProductosController {
     @Query('incluirReceta') incluirReceta?: string,
   ) {
     return this.productosService.findAll(categoria, activo, incluirReceta);
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body()
+    data: Prisma.ProductoUpdateInput & {
+      receta?: { insumoId: string; cantidad: number }[];
+    },
+  ) {
+    return this.productosService.update(id, data);
   }
 }
