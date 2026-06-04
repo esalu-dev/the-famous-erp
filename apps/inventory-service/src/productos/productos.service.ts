@@ -61,4 +61,43 @@ export class ProductosService {
       throw new BadRequestException('Error al crear el producto: ' + error);
     }
   }
+
+  async findAll(categoria?: string, activoStr?: string, incluirRecetaStr?: string) {
+    try {
+      const whereFilters: Prisma.ProductoWhereInput = {};
+
+      if (categoria) {
+        whereFilters.categoria = categoria;
+      }
+
+      if (activoStr !== undefined) {
+        whereFilters.activo = activoStr == 'true';
+      }
+
+      let includeQuery: Prisma.ProductoInclude | undefined = undefined;
+      if (incluirRecetaStr === 'true') {
+        includeQuery = {
+          receta: {
+            include: {
+              insumo: {
+                select: {
+                  nombre: true,
+                  unidadMedida: true,
+                  precioActual: true,
+                },
+              },
+            },
+          },
+        };
+      }
+
+      return await this.prismaService.producto.findMany({
+        where: whereFilters,
+        include: includeQuery,
+      });
+    } catch (error) {
+      throw new BadRequestException('Error al obtener los productos: ' + error);
+    }
+    
+  }
 }

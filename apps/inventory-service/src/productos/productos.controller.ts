@@ -1,4 +1,4 @@
-import { Controller, Body, Post } from '@nestjs/common';
+import { Controller, Body, Post, Get, Query} from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { Prisma } from '@the-famous-erp/database-client';
 
@@ -14,5 +14,14 @@ export class ProductosController {
     },
   ) {
     return this.productosService.create(data);
+  }
+  
+  @Get()
+  async findAll(
+    @Query('categoria') categoria?: string,
+    @Query('activo') activo?: string,
+    @Query('incluirReceta') incluirReceta?: string,
+  ) {
+    return this.productosService.findAll(categoria, activo, incluirReceta);
   }
 }
