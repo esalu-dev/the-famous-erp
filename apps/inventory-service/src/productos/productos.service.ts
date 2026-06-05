@@ -1,6 +1,7 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Producto, Prisma } from '@the-famous-erp/database-client';
+
 
 @Injectable()
 export class ProductosService {
@@ -141,4 +142,16 @@ export class ProductosService {
       throw new BadRequestException('Error al actualizar el producto: ' + error);
     }
   }
+
+  async findOne(id: string) {
+      const producto = await this.prismaService.producto.findUnique({
+        where: { id },
+      });
+  
+      if (!producto) {
+        throw new NotFoundException(`Producto con ID ${id} no encontrado`);
+      }
+  
+      return producto;
+    }
 }

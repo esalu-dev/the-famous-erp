@@ -35,4 +35,9 @@ export class ProductosController {
   ) {
     return this.productosService.update(id, data);
   }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.productosService.findOne(id);
+  }
 }
