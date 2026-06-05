@@ -2,7 +2,6 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service';
 import { Producto, Prisma } from '@the-famous-erp/database-client';
 
-
 @Injectable()
 export class ProductosService {
   constructor(private readonly prismaService: PrismaService) {}
@@ -144,18 +143,18 @@ export class ProductosService {
   }
 
   async findOne(id: string) {
-      const producto = await this.prismaService.producto.findUnique({
-        where: { id },
-      });
-  
-      if (!producto) {
-        throw new NotFoundException(`Producto con ID ${id} no encontrado`);
-      }
-  
-      return producto;
+    const producto = await this.prismaService.producto.findUnique({
+      where: { id },
+    });
+
+    if (!producto) {
+      throw new NotFoundException(`Producto con ID ${id} no encontrado`);
     }
 
-    async remove(id: string) {
+    return producto;
+  }
+
+  async remove(id: string) {
     await this.findOne(id);
 
     return this.prismaService.producto.update({

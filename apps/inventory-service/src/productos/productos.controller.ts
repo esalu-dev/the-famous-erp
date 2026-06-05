@@ -1,4 +1,4 @@
-import { Controller, Body, Post, Get, Query, Patch, Param, Delete} from '@nestjs/common';
+import { Controller, Body, Post, Get, Query, Patch, Param, Delete } from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { Prisma } from '@the-famous-erp/database-client';
 
@@ -44,6 +44,5 @@ export class ProductosController {
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return this.productosService.remove(id);
-}
-
+  }
 }
