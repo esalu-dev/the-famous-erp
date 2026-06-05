@@ -154,4 +154,13 @@ export class ProductosService {
   
       return producto;
     }
+
+    async remove(id: string) {
+    await this.findOne(id);
+
+    return this.prismaService.producto.update({
+      where: { id },
+      data: { activo: false },
+    });
+  }
 }
