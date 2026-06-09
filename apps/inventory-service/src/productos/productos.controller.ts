@@ -11,6 +11,7 @@ export class ProductosController {
     @Body()
     data: Prisma.ProductoCreateInput & {
       receta?: { insumoId: string; cantidad: number }[];
+      imagenFileName?: string;
     },
   ) {
     return this.productosService.create(data);
@@ -31,6 +32,7 @@ export class ProductosController {
     @Body()
     data: Prisma.ProductoUpdateInput & {
       receta?: { insumoId: string; cantidad: number }[];
+      imagenFileName?: string;
     },
   ) {
     return this.productosService.update(id, data);
