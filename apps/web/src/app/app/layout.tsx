@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { SidebarButton } from '@/components/dashboard/sidebarButton';
 import { TopBar } from '@/components/dashboard/TopBar';
 import {
@@ -9,6 +8,7 @@ import {
   Thunderbolt,
   Trolley,
   Person,
+  Calendar,
 } from '@gravity-ui/icons';
 import { Separator } from '@heroui/react';
 import logo from '../../../public/logo.png';
@@ -31,6 +31,11 @@ export default async function MainLayout({ children }: { children: React.ReactNo
               <li>
                 <SidebarButton icon={<ChartColumnStacked />} route="/app">
                   Inicio
+                </SidebarButton>
+              </li>
+              <li>
+                <SidebarButton icon={<Calendar />} route="/app/cierre">
+                  Cierre del Día
                 </SidebarButton>
               </li>
               <li>

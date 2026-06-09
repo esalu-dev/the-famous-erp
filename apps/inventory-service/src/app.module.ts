@@ -7,6 +7,7 @@ import { ProveedoresModule } from './proveedores/proveedores.module';
 import { InsumosModule } from './insumos/insumos.module';
 import { ServiciosModule } from './servicios/servicios.module';
 import { ProductosModule } from './productos/productos.module';
+import { CierreModule } from './cierre/cierre.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ProductosModule } from './productos/productos.module';
     ScheduleModule.forRoot(),
     ServiciosModule,
     ProductosModule,
+    CierreModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
