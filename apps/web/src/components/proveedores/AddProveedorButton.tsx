@@ -10,7 +10,6 @@ export const AddProveedorButton = () => {
 
   return (
     <>
-      {/* boton +*/}
       <Button
         isIconOnly
         size="lg"
@@ -20,7 +19,6 @@ export const AddProveedorButton = () => {
         <Plus className="size-6" />
       </Button>
 
-      {/* boton + */}
       <ProveedorForm isOpen={isModalOpen} onOpenChange={setIsModalOpen} />
     </>
   );
