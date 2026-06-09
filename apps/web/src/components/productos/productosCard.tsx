@@ -7,12 +7,14 @@ export function ProductosCard({
   imagenUrl,
   margenGanancia,
   categoria,
+  onEdit,
 }: {
   titulo: string;
   precio: number;
   imagenUrl: string | null;
   margenGanancia: string;
   categoria: string;
+  onEdit: () => void;
 }) {
   return (
     <Card className="w-full h-80 overflow-hidden transition-all duration-200">
@@ -40,7 +42,7 @@ export function ProductosCard({
           </div>
         </Card.Header>
         <div className="mt-4">
-          <Button className="w-full">
+          <Button className="w-full" onPress={onEdit}>
             <Pencil />
             Actualizar
           </Button>
