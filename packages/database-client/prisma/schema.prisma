@@ -27,9 +27,9 @@ model Insumo {
   nombre           String
   tipo             InsumoTipo
   unidadMedida     UnidadMedida
-  cantidadActual   Decimal           @db.Decimal(10, 2)
-  cantidadMinima   Decimal           @db.Decimal(10, 2)
-  precioActual     Decimal           @db.Decimal(10, 2)
+  cantidadActual   Decimal           @db.Decimal(10, 4)
+  cantidadMinima   Decimal           @db.Decimal(10, 4)
+  precioActual     Decimal           @db.Decimal(10, 4)
   categoria        CategoriaABC      @default(C)
   imagenUrl        String?
   activo           Boolean           @default(true)
@@ -44,8 +44,8 @@ model Insumo {
 model PrecioHistorial {
   id             String   @id @default(uuid())
   insumoId       String
-  precioAnterior Decimal  @db.Decimal(10, 2)
-  precioNuevo    Decimal  @db.Decimal(10, 2)
+  precioAnterior Decimal  @db.Decimal(10, 4)
+  precioNuevo    Decimal  @db.Decimal(10, 4)
   fecha          DateTime @default(now())
   usuarioId      String
   insumo         Insumo   @relation(fields: [insumoId], references: [id])
@@ -71,7 +71,7 @@ model InsumoProveedor {
   id             String    @id @default(uuid())
   insumoId       String
   proveedorId    String
-  precioUnitario Decimal   @db.Decimal(10, 2)
+  precioUnitario Decimal   @db.Decimal(10, 4)
   esPreferido    Boolean   @default(false)
   ultimaCompra   DateTime?
   insumo         Insumo    @relation(fields: [insumoId], references: [id])
@@ -84,7 +84,7 @@ model Producto {
   id          String        @id @default(uuid())
   nombre      String
   categoria   String
-  precioVenta Decimal       @db.Decimal(10, 2)
+  precioVenta Decimal       @db.Decimal(10, 4)
   imagenUrl   String?
   activo      Boolean       @default(true)
   createdAt   DateTime      @default(now())
@@ -118,7 +118,7 @@ model VentaDiaria {
 model Merma {
   id            String   @id @default(uuid())
   insumoId      String
-  cantidad      Decimal  @db.Decimal(10, 2)
+  cantidad      Decimal  @db.Decimal(10, 4)
   motivo        String?
   fecha         DateTime @db.Date
   registradoPor String
@@ -130,7 +130,7 @@ model Merma {
 model Servicio {
   id           String       @id @default(uuid())
   nombre       String
-  costo        Decimal      @db.Decimal(10, 2)
+  costo        Decimal      @db.Decimal(10, 4)
   periodicidad Periodicidad
   proximoPago  DateTime     @db.Date
   autorenovable Boolean      @default(true)
@@ -140,9 +140,9 @@ model Servicio {
 
 model Configuracion {
   id                      String   @id @default(uuid())
-  porcentajeMantenimiento Decimal  @default(0) @db.Decimal(5, 2)
-  umbralAbcA              Decimal  @default(80) @db.Decimal(5, 2)
-  umbralAbcB              Decimal  @default(95) @db.Decimal(5, 2)
+  porcentajeMantenimiento Decimal  @default(0) @db.Decimal(5, 4)
+  umbralAbcA              Decimal  @default(80) @db.Decimal(5, 4)
+  umbralAbcB              Decimal  @default(95) @db.Decimal(5, 4)
   updatedAt               DateTime @updatedAt
   updatedBy               String?
 }

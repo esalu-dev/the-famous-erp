@@ -330,12 +330,12 @@ export function PreciosClient({ inicialHistorial }: PreciosClientProps) {
 
                       {/* Price Anterior */}
                       <td className="px-6 py-4 text-right font-medium text-gray-500">
-                        ${ant.toFixed(2)}
+                        ${ant.toFixed(3)}
                       </td>
 
                       {/* Price Nuevo */}
                       <td className="px-6 py-4 text-right font-semibold text-surface-foreground">
-                        ${nve.toFixed(2)}
+                        ${nve.toFixed(3)}
                       </td>
 
                       {/* Variation Chip */}
