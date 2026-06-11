@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const httpPort = Number(process.env.ANALYTICS_SERVICE_PORT) || 3003;
+  const httpPort = Number(process.env.PORT || process.env.ANALYTICS_SERVICE_PORT) || 3003;
   const tcpPort = Number(process.env.ANALYTICS_SERVICE_TCP_PORT) || 3006;
 
   const app = await NestFactory.create(AppModule);
