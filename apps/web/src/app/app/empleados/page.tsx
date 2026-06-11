@@ -1,5 +1,10 @@
 import { EmpleadosGrid } from '@/components/empleados/empleadosGrid';
 import { getEmpleadosAction } from '@/actions/empleados.actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Empleados',
+};
 
 export default async function EmpleadosPage() {
   const res = await getEmpleadosAction();

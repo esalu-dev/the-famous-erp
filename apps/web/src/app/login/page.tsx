@@ -1,5 +1,10 @@
 import { LoginForm } from '@/components/auth/loginForm';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Iniciar Sesión',
+};
 
 export default function LoginPage() {
   return (

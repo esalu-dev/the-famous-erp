@@ -39,7 +39,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
                 </SidebarButton>
               </li>
               <li>
-                <SidebarButton icon={<FileDollar />} route="/precios">
+                <SidebarButton icon={<FileDollar />} route="/app/precios">
                   Precios
                 </SidebarButton>
               </li>

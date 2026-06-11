@@ -1,5 +1,10 @@
 import { ServiciosGrid } from '@/components/servicios/serviciosGrid';
 import { getServiciosAction } from '@/actions/servicios.actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Servicios',
+};
 
 export default async function ServiciosPage() {
   const response = await getServiciosAction();

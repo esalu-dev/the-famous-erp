@@ -1,6 +1,11 @@
 import { CategoryTags } from '@/components/insumos/categoriaTags';
 import { InsumosGrid } from '@/components/insumos/InsumosGrid';
 import { getInsumosAction } from '@/actions/insumos.actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Insumos',
+};
 
 export default async function InsumosPage() {
   const insumos = await getInsumosAction();

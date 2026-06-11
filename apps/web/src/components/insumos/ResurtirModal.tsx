@@ -15,7 +15,7 @@ import {
 } from '@heroui/react';
 import { resurtirInsumoAction, type Insumo } from '@/actions/insumos.actions';
 import { getProveedoresAction, type Proveedor } from '@/actions/proveedores.actions';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 interface ResurtirModalProps {
   insumo: Insumo;
@@ -26,6 +26,19 @@ interface ResurtirModalProps {
 export const ResurtirModal = ({ insumo, isOpen, onOpenChange }: ResurtirModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+  const [selectedUnidad, setSelectedUnidad] = useState<string>(insumo.unidadMedida || '');
+
+  const defaultPrecio = useMemo(() => {
+    if (!insumo.precioActual) return '';
+    const basePrice = Number(insumo.precioActual);
+    if (insumo.unidadMedida === 'Gramos' && selectedUnidad === 'Kilogramos') {
+      return (basePrice * 1000).toString();
+    }
+    if (insumo.unidadMedida === 'Mililitros' && selectedUnidad === 'Litros') {
+      return (basePrice * 1000).toString();
+    }
+    return basePrice.toString();
+  }, [insumo.precioActual, insumo.unidadMedida, selectedUnidad]);
 
   useEffect(() => {
     getProveedoresAction().then((res) => {
@@ -113,7 +126,8 @@ export const ResurtirModal = ({ insumo, isOpen, onOpenChange }: ResurtirModalPro
                         className="w-full"
                         name="unidadMedida"
                         placeholder="Unidad"
-                        defaultSelectedKey={insumo.unidadMedida}
+                        selectedKey={selectedUnidad}
+                        onSelectionChange={(key) => setSelectedUnidad(key as string)}
                         isDisabled={isSubmitting}
                         isRequired
                       >
@@ -159,10 +173,11 @@ export const ResurtirModal = ({ insumo, isOpen, onOpenChange }: ResurtirModalPro
 
                   {/* Precio Unitario */}
                   <TextField
+                    key={selectedUnidad}
                     className="w-full"
                     name="precioUnitario"
                     isDisabled={isSubmitting}
-                    defaultValue={insumo.precioActual?.toString()}
+                    defaultValue={defaultPrecio}
                   >
                     <Label className="text-xs font-bold uppercase tracking-widest">
                       Costo Unitario de Compra (Opcional)
@@ -180,7 +195,7 @@ export const ResurtirModal = ({ insumo, isOpen, onOpenChange }: ResurtirModalPro
                         type="number"
                         step="0.01"
                         min={0}
-                        placeholder={insumo.precioActual?.toString() || '0.00'}
+                        placeholder={defaultPrecio || '0.00'}
                       />
                       <InputGroup.Suffix className="text-muted text-xs pr-3">
                         MXN

@@ -30,7 +30,7 @@ export class ProductosService {
         const res = await fetch(
           `${process.env.MEDIA_SERVICE_URL}/media/upload-url/${imagenFileName}`,
         );
-        fileData = (await res.json()) as any;
+        fileData = await res.json();
       }
 
       let recetaFinal: { insumoId: string; cantidad: number }[] = [];
@@ -141,7 +141,7 @@ export class ProductosService {
         const res = await fetch(
           `${process.env.MEDIA_SERVICE_URL}/media/upload-url/${imagenFileName}`,
         );
-        fileData = (await res.json()) as any;
+        fileData = await res.json();
       }
 
       const updateData: any = {
