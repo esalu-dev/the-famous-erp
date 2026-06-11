@@ -1,5 +1,10 @@
 import { ProductosGrid } from '@/components/productos/productosGrid';
 import { getProductosAction } from '@/actions/productos.actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Productos',
+};
 
 export default async function ProductosPage() {
   const response = await getProductosAction({ incluirReceta: true });

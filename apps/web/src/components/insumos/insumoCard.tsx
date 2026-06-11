@@ -51,10 +51,18 @@ export function InsumoCard({
     unidadDisplay = 'pz';
   }
 
+  let precioDisplay = precio !== undefined ? Number(precio) : 0;
   let precioUnidadLabel = '';
-  if (unidad === 'Gramos') {
+
+  if (unidadDisplay === 'kg') {
+    precioDisplay = precioDisplay * 1000;
+    precioUnidadLabel = '/ kg';
+  } else if (unidadDisplay === 'g') {
     precioUnidadLabel = '/ g';
-  } else if (unidad === 'Mililitros') {
+  } else if (unidadDisplay === 'L') {
+    precioDisplay = precioDisplay * 1000;
+    precioUnidadLabel = '/ L';
+  } else if (unidadDisplay === 'ml') {
     precioUnidadLabel = '/ ml';
   } else if (unidad === 'Miligramos') {
     precioUnidadLabel = '/ mg';
@@ -99,7 +107,7 @@ export function InsumoCard({
           <div className="flex items-center justify-between w-full">
             <Card.Title className="pr-8 font-bold text-base">{titulo}</Card.Title>
             <span className="font-bold flex items-baseline gap-0.5">
-              ${precio}
+              ${precioDisplay.toFixed(2)}
               {precioUnidadLabel && (
                 <span className="text-xs text-muted font-normal">{precioUnidadLabel}</span>
               )}

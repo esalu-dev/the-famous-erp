@@ -1,5 +1,10 @@
 import { CierreClient } from '@/components/cierre/CierreClient';
 import { getProductosAction } from '@/actions/productos.actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Cierre del Día',
+};
 
 export default async function CierrePage() {
   const response = await getProductosAction({ incluirReceta: true, activo: true });

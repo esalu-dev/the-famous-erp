@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, Inject } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { CreateInsumoDto } from './dto/create-insumo.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateInsumoDto } from './dto/update-insumo.dto';
@@ -8,7 +9,10 @@ import { FileDataResponseDto } from './dto/fileData-response.dto';
 
 @Injectable()
 export class InsumosService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject('ANALYTICS_SERVICE') private readonly analyticsClient: ClientProxy,
+  ) {}
 
   async findOne(id: string) {
     const insumo = await this.prisma.insumo.findUnique({
@@ -82,7 +86,7 @@ export class InsumosService {
     };
   }
 
-  async update(id: string, dto: UpdateInsumoDto) {
+  async update(id: string, dto: UpdateInsumoDto, usuarioId?: string) {
     // Obtener el insumo antes de actualizar para saber si tenía una imagen previa
     const insumoAnterior = await this.prisma.insumo.findUnique({
       where: { id },
@@ -141,6 +145,24 @@ export class InsumosService {
       }
     }
 
+    const precioAnterior = insumoAnterior ? Number(insumoAnterior.precioActual) : null;
+    const precioNuevo =
+      dto.precioActual !== undefined && dto.precioActual !== null ? Number(dto.precioActual) : null;
+
+    if (
+      precioNuevo !== null &&
+      precioAnterior !== null &&
+      precioNuevo !== precioAnterior &&
+      usuarioId
+    ) {
+      this.analyticsClient.emit('insumo.precio_cambiado', {
+        insumoId: id,
+        precioAnterior,
+        precioNuevo,
+        usuarioId,
+      });
+    }
+
     return {
       insumo: {
         ...dbResult,
@@ -153,6 +175,7 @@ export class InsumosService {
   async resurtir(
     id: string,
     dto: { cantidad: number; proveedorId: string; precioUnitario?: number },
+    usuarioId?: string,
   ) {
     const { cantidad, proveedorId, precioUnitario } = dto;
 
@@ -188,16 +211,15 @@ export class InsumosService {
       });
     }
 
-    if (precioUnitario !== undefined && precioUnitario !== null && insumoAnterior) {
-      const firstUser = await this.prisma.usuario.findFirst();
-      if (firstUser) {
-        await this.prisma.precioHistorial.create({
-          data: {
-            insumoId: id,
-            precioAnterior: insumoAnterior.precioActual,
-            precioNuevo: precioUnitario,
-            usuarioId: firstUser.id,
-          },
+    if (precioUnitario !== undefined && precioUnitario !== null && insumoAnterior && usuarioId) {
+      const precioAnteriorNum = Number(insumoAnterior.precioActual);
+      const precioNuevoNum = Number(precioUnitario);
+      if (precioAnteriorNum !== precioNuevoNum) {
+        this.analyticsClient.emit('insumo.precio_cambiado', {
+          insumoId: id,
+          precioAnterior: precioAnteriorNum,
+          precioNuevo: precioNuevoNum,
+          usuarioId,
         });
       }
     }

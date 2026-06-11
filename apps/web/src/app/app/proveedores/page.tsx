@@ -1,5 +1,10 @@
 import { ProveedoresGrid } from '@/components/proveedores/proveedoresGrid';
 import { getProveedoresAction } from '@/actions/proveedores.actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Proveedores',
+};
 
 export default async function ProveedoresPage() {
   const proveedores = await getProveedoresAction();

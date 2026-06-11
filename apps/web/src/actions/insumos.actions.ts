@@ -2,6 +2,7 @@
 
 import { config } from '@/lib/config';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 
 export interface Insumo {
   id?: string;
@@ -76,6 +77,9 @@ export async function saveInsumoAction(
     proveedorId: proveedorId || undefined,
   };
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get('session_token')?.value;
+
   let fileUploadUrl: string;
 
   try {
@@ -88,6 +92,7 @@ export async function saveInsumoAction(
       method,
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(payload),
     });
@@ -125,11 +130,15 @@ export async function deleteInsumoAction(
   // Simular latencia de red para demostrar el spinner de carga
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get('session_token')?.value;
+
   try {
     const res = await fetch(`${config.services.inventory}/insumos/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       },
     });
 
@@ -209,11 +218,15 @@ export async function resurtirInsumoAction(
     }
   }
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get('session_token')?.value;
+
   try {
     const res = await fetch(`${config.services.inventory}/insumos/${id}/resurtir`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({
         cantidad,
