@@ -4,6 +4,20 @@ import { config } from '@/lib/config';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
+export interface InsumoProveedorDetail {
+  id: string;
+  insumoId: string;
+  proveedorId: string;
+  precioUnitario: number;
+  esPreferido: boolean;
+  ultimaCompra?: string | null;
+  proveedor?: {
+    id: string;
+    nombre: string;
+    razonSocial?: string | null;
+  };
+}
+
 export interface Insumo {
   id?: string;
   nombre: string;
@@ -15,6 +29,7 @@ export interface Insumo {
   categoria?: 'A' | 'B' | 'C';
   proveedorId?: string;
   imagenUrl?: string | null;
+  proveedores?: InsumoProveedorDetail[];
 }
 
 export async function saveInsumoAction(

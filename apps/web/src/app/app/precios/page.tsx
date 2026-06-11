@@ -2,6 +2,8 @@ import { PreciosClient } from '@/components/precios/PreciosClient';
 import { getPrecioHistorialAction } from '@/actions/precios.actions';
 import { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Historial de Precios',
 };

@@ -18,7 +18,11 @@ export class InsumosService {
     const insumo = await this.prisma.insumo.findUnique({
       where: { id },
       include: {
-        proveedores: true,
+        proveedores: {
+          include: {
+            proveedor: true,
+          },
+        },
       },
     });
     if (!insumo) return null;
@@ -31,7 +35,11 @@ export class InsumosService {
   async findAll() {
     const insumos = await this.prisma.insumo.findMany({
       include: {
-        proveedores: true,
+        proveedores: {
+          include: {
+            proveedor: true,
+          },
+        },
       },
       orderBy: {
         nombre: 'asc',
