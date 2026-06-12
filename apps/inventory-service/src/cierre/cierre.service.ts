@@ -188,4 +188,23 @@ export class CierreService {
       warnings,
     };
   }
+
+  async getHistoricoVentas() {
+    return this.prismaService.ventaDiaria.findMany({
+      include: {
+        producto: {
+          include: {
+            receta: {
+              include: {
+                insumo: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        fecha: 'desc',
+      },
+    });
+  }
 }

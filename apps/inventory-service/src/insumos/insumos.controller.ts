@@ -26,7 +26,11 @@ export class InsumosController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() dto: UpdateInsumoDto, @Req() req: { user?: { id: string } }) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateInsumoDto,
+    @Req() req: { user?: { id: string } },
+  ) {
     const usuarioId = req.user?.id;
     return this.insumosService.update(id, dto, usuarioId);
   }
