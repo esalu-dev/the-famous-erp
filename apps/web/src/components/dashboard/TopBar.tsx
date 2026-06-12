@@ -20,9 +20,19 @@ export function TopBar() {
 
   return (
     <div className="flex h-16 justify-end items-center gap-6 px-4 py-4 w-full">
-      <Button isIconOnly variant="ghost" size="lg">
-        <Bell />
-      </Button>
+      {/* <Dropdown>
+        <Button isIconOnly variant="ghost" size="lg">
+          <Bell />
+        </Button>
+        <Dropdown.Popover>
+          <Dropdown.Menu>
+            <Dropdown.Item>
+              <Label>No tienes notificaciones</Label>
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown.Popover>
+      </Dropdown> */}
+
       <Separator orientation="vertical"></Separator>
       <div className="flex gap-4 items-center">
         <div className="flex flex-col text-right">

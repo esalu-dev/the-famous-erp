@@ -6,6 +6,7 @@ import { Button } from '@heroui/react';
 import { InsumoCard } from './insumoCard';
 import { InsumoForm } from './InsumoForm';
 import { ResurtirModal } from './ResurtirModal';
+import { CategoryTags } from './categoriaTags';
 import { type Insumo } from '@/actions/insumos.actions';
 
 interface InsumosGridProps {
@@ -17,6 +18,18 @@ export function InsumosGrid({ insumos }: InsumosGridProps) {
   const [isResurtirOpen, setIsResurtirOpen] = useState(false);
   const [insumoAEditar, setInsumoAEditar] = useState<Insumo | null>(null);
   const [insumoAResurtir, setInsumoAResurtir] = useState<Insumo | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  const categories = [
+    { id: 'all', label: 'Todos' },
+    { id: 'Comida', label: 'Comida' },
+    { id: 'Bebida', label: 'Bebidas' },
+    { id: 'Cerveza', label: 'Cerveza' },
+    { id: 'Empaque', label: 'Empaque' },
+    { id: 'Limpieza', label: 'Limpieza' },
+    { id: 'Utensilios', label: 'Utensilios' },
+    { id: 'Papeleria', label: 'Papelería' },
+  ];
 
   const handleEdit = (insumo: Insumo) => {
     setInsumoAEditar(insumo);
@@ -33,24 +46,42 @@ export function InsumosGrid({ insumos }: InsumosGridProps) {
     setIsOpen(true);
   };
 
+  const filteredInsumos = selectedCategory === 'all'
+    ? insumos
+    : insumos.filter((insumo) => insumo.tipo === selectedCategory);
+
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
-        {insumos.map((insumo) => (
-          <InsumoCard
-            key={insumo.id}
-            titulo={insumo.nombre}
-            categoria={insumo.categoria}
-            precio={insumo.precioActual}
-            stock={insumo.cantidadActual}
-            unidad={insumo.unidadMedida}
-            imagenUrl={insumo.imagenUrl}
-            cantidadMinima={insumo.cantidadMinima}
-            onEdit={() => handleEdit(insumo)}
-            onResurtir={() => handleResurtir(insumo)}
-          />
-        ))}
+      <div className="mt-6">
+        <CategoryTags
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
       </div>
+
+      {filteredInsumos.length === 0 ? (
+        <div className="text-sm text-muted italic p-4 bg-surface-secondary rounded-xl border border-neutral-200 dark:border-neutral-800 mt-6">
+          No hay insumos en esta categoría.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
+          {filteredInsumos.map((insumo) => (
+            <InsumoCard
+              key={insumo.id}
+              titulo={insumo.nombre}
+              categoria={insumo.categoria}
+              precio={insumo.precioActual}
+              stock={insumo.cantidadActual}
+              unidad={insumo.unidadMedida}
+              imagenUrl={insumo.imagenUrl}
+              cantidadMinima={insumo.cantidadMinima}
+              onEdit={() => handleEdit(insumo)}
+              onResurtir={() => handleResurtir(insumo)}
+            />
+          ))}
+        </div>
+      )}
 
       <Button
         isIconOnly
