@@ -135,3 +135,47 @@ export async function procesarCierreAction(
     return { success: false, message: 'Error al conectar con el servidor para procesar cierre.' };
   }
 }
+
+export interface VentaHistorica {
+  id: string;
+  fecha: string;
+  productoId: string;
+  cantidad: number;
+  procesado: boolean;
+  producto: {
+    id: string;
+    nombre: string;
+    categoria: string;
+    precioVenta: number;
+    receta?: {
+      id: string;
+      cantidad: number;
+      insumo: {
+        id: string;
+        nombre: string;
+        precioActual: number;
+      };
+    }[];
+  };
+}
+
+export async function getHistoricoVentasAction(): Promise<{ success: boolean; data: VentaHistorica[] }> {
+  try {
+    const res = await fetch(`${config.services.inventory}/cierre/historico`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error('Error al obtener el histórico de ventas');
+    }
+
+    const data = await res.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error in getHistoricoVentasAction:', error);
+    return { success: false, data: [] };
+  }
+}

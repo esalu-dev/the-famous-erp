@@ -34,6 +34,11 @@ export class CierreController {
     return this.cierreService.registrarVentas(body.fecha, body.registradoPor, body.ventas);
   }
 
+  @Get('historico')
+  async getHistorico() {
+    return this.cierreService.getHistoricoVentas();
+  }
+
   @Post('procesar')
   async procesarCierre(@Body() body: { fecha: string }) {
     if (!body.fecha) throw new BadRequestException('La fecha es requerida');

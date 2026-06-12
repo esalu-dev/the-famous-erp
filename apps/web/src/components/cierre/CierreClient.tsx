@@ -428,7 +428,8 @@ export function CierreClient({ productos }: CierreClientProps) {
                 <Button
                   onPress={handleSaveVentas}
                   isDisabled={isSubmitting || liveRevenue === 0}
-                  className="w-full h-11 bg-surface-secondary border border-neutral-200 hover:bg-surface-secondary/80 font-bold"
+                  className="w-full h-11"
+                  variant="outline"
                 >
                   Guardar Conteo de Ventas
                 </Button>
@@ -436,7 +437,7 @@ export function CierreClient({ productos }: CierreClientProps) {
                   onPress={() => setIsConfirmOpen(true)}
                   isDisabled={isSubmitting || status === 'NO_REGISTRADO'}
                   variant="primary"
-                  className="w-full h-11 bg-primary text-primary-foreground font-bold hover:bg-primary/95 transition-all"
+                  className="w-full h-11"
                 >
                   Procesar Cierre del Día
                 </Button>
