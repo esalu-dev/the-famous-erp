@@ -446,45 +446,57 @@ export function DashboardClient({
                       <Table.Column>INGRESOS</Table.Column>
                       <Table.Column>ESTADO</Table.Column>
                     </Table.Header>
-                    <Table.Body emptyContent="No hay ventas registradas todavía.">
-                      {topProducts.map((p) => {
-                        const margin =
-                          p.ingresos > 0
-                            ? ((p.ingresos - p.costo * p.cantidad) / p.ingresos) * 100
-                            : 0;
-                        return (
-                          <Table.Row
-                            key={p.nombre}
-                            className="border-b border-neutral-50 dark:border-neutral-900 hover:bg-neutral-50/50 dark:hover:bg-neutral-900/30 transition-colors duration-150"
-                          >
-                            <Table.Cell className="py-4 px-5">
-                              <div className="flex flex-col">
-                                <span className="font-bold text-sm text-accent">{p.nombre}</span>
-                                <span className="text-[10px] text-muted">{p.categoria}</span>
-                              </div>
-                            </Table.Cell>
-                            <Table.Cell className="py-4 px-5 text-center font-semibold text-sm">
-                              {p.cantidad} u.
-                            </Table.Cell>
-                            <Table.Cell className="py-4 px-5 text-right font-medium text-sm text-danger">
-                              {formatCurrency(p.costo)}
-                            </Table.Cell>
-                            <Table.Cell className="py-4 px-5 text-right font-bold text-sm text-accent">
-                              {formatCurrency(p.ingresos)}
-                            </Table.Cell>
-                            <Table.Cell className="py-4 px-5 text-center">
-                              <Chip
-                                size="sm"
-                                color={margin > 50 ? 'success' : margin > 30 ? 'warning' : 'danger'}
-                                variant="flat"
-                                className="rounded-full"
-                              >
-                                {Math.round(margin)}% margen
-                              </Chip>
-                            </Table.Cell>
-                          </Table.Row>
-                        );
-                      })}
+                    <Table.Body>
+                      {topProducts.length === 0 ? (
+                        <Table.Row className="border-b border-neutral-50 dark:border-neutral-900">
+                          <Table.Cell className="py-4 px-5 text-left font-medium text-sm text-muted">
+                            No hay ventas registradas todavía.
+                          </Table.Cell>
+                          <Table.Cell className="py-4 px-5 text-center font-medium text-sm text-muted">-</Table.Cell>
+                          <Table.Cell className="py-4 px-5 text-right font-medium text-sm text-muted">-</Table.Cell>
+                          <Table.Cell className="py-4 px-5 text-right font-medium text-sm text-muted">-</Table.Cell>
+                          <Table.Cell className="py-4 px-5 text-center font-medium text-sm text-muted">-</Table.Cell>
+                        </Table.Row>
+                      ) : (
+                        topProducts.map((p) => {
+                          const margin =
+                            p.ingresos > 0
+                              ? ((p.ingresos - p.costo * p.cantidad) / p.ingresos) * 100
+                              : 0;
+                          return (
+                            <Table.Row
+                              key={p.nombre}
+                              className="border-b border-neutral-50 dark:border-neutral-900 hover:bg-neutral-50/50 dark:hover:bg-neutral-900/30 transition-colors duration-150"
+                            >
+                              <Table.Cell className="py-4 px-5">
+                                <div className="flex flex-col">
+                                  <span className="font-bold text-sm text-accent">{p.nombre}</span>
+                                  <span className="text-[10px] text-muted">{p.categoria}</span>
+                                </div>
+                              </Table.Cell>
+                              <Table.Cell className="py-4 px-5 text-center font-semibold text-sm">
+                                {p.cantidad} u.
+                              </Table.Cell>
+                              <Table.Cell className="py-4 px-5 text-right font-medium text-sm text-danger">
+                                {formatCurrency(p.costo)}
+                              </Table.Cell>
+                              <Table.Cell className="py-4 px-5 text-right font-bold text-sm text-accent">
+                                {formatCurrency(p.ingresos)}
+                              </Table.Cell>
+                              <Table.Cell className="py-4 px-5 text-center">
+                                <Chip
+                                  size="sm"
+                                  color={margin > 50 ? 'success' : margin > 30 ? 'warning' : 'danger'}
+                                  variant="soft"
+                                  className="rounded-full"
+                                >
+                                  {Math.round(margin)}% margen
+                                </Chip>
+                              </Table.Cell>
+                            </Table.Row>
+                          );
+                        })
+                      )}
                     </Table.Body>
                   </Table.Content>
                 </Table.ScrollContainer>
@@ -526,7 +538,7 @@ export function DashboardClient({
                           <Chip
                             size="sm"
                             color={isA ? 'danger' : i.categoria === 'B' ? 'warning' : 'success'}
-                            variant="flat"
+                            variant="soft"
                             className="rounded-md font-bold text-[10px] h-5"
                           >
                             Cat. {i.categoria}
