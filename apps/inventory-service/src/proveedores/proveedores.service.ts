@@ -48,4 +48,49 @@ export class ProveedoresService {
       data: { estado: 'Inactivo' },
     });
   }
+
+async compararPrecios(insumoId: string, cantidad: number) {
+
+  const insumo = await this.prisma.insumo.findUnique({
+    where: { id: insumoId },
+  });
+
+  if (!insumo) {
+    throw new NotFoundException(`Insumo con ID ${insumoId} no encontrado`);
+  }
+
+  const proveedoresInsumo = await this.prisma.insumoProveedor.findMany({
+    where: { insumoId },
+    include: {
+      proveedor: true, 
+    },
+  });
+
+  if (proveedoresInsumo.length === 0) {
+    return []; 
+  }
+
+  const comparativa = proveedoresInsumo.map((item) => {
+    const precioUnitario = Number(item.precioUnitario); 
+    const totalCalculado = precioUnitario * cantidad;
+
+    return {
+      proveedorId: item.proveedor.id,
+      nombreProveedor: item.proveedor.nombre,
+      precioUnitario,
+      totalCalculado,
+      esMasBarato: false, 
+      datosContacto: {
+        telefono: item.proveedor.telefono,
+        correo: item.proveedor.correo,
+      }
+    };
+  });
+
+  comparativa.sort((a, b) => a.totalCalculado - b.totalCalculado);
+
+  comparativa[0].esMasBarato = true;
+
+  return comparativa;
+}
 }
